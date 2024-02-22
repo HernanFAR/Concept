@@ -1,7 +1,7 @@
-﻿using Concept.Abstracts;
-using System;
+﻿using System;
+using Concept.Core.Abstracts;
 
-namespace Concept.Extensions;
+namespace Concept.Core.Extensions;
 
 public static class CharacteristicExtensions
 {

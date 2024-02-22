@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 
-namespace Concept.Abstracts;
+namespace Concept.Core.Abstracts;
 
 public abstract class CharacteristicYieldStrategy(Entity entity) : IEnumerable<Characteristic>
 {

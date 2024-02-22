@@ -1,8 +1,8 @@
-﻿using Concept.Structs;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using Concept.Core.Structs;
 
-namespace Concept.Abstracts;
+namespace Concept.Core.Abstracts;
 
 public abstract class Entity(
     string? name,

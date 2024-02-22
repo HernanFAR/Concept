@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Concept;
+namespace Concept.Core;
 
 public sealed class RelationKind(string name, string description, sbyte value,
     IEnumerable<RelationKind> derivesFrom)

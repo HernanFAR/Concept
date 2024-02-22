@@ -1,10 +1,10 @@
-﻿using Concept.Abstracts;
-using Concept.Structs;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using Concept.Interfaces;
+using Concept.Core.Abstracts;
+using Concept.Core.Interfaces;
+using Concept.Core.Structs;
 
-namespace Concept;
+namespace Concept.Core;
 
 public class Society(
     string? name, 

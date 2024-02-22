@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Concept.Abstracts;
+namespace Concept.Core.Abstracts;
 
 public abstract class Characteristic(byte value) : IEquatable<Characteristic>
 {

@@ -1,8 +1,8 @@
 ﻿using System;
-using Concept.Abstracts;
-using Concept.Interfaces;
+using Concept.Core.Abstracts;
+using Concept.Core.Interfaces;
 
-namespace Concept.Characteristics.Comparers;
+namespace Concept.Core.Characteristics.Comparers;
 
 public class TrueEqualityCharacteristicComparer : ICharacteristicComparer
 {

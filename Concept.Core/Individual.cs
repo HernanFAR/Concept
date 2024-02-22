@@ -1,6 +1,6 @@
-﻿using Concept.Abstracts;
-using Concept.Structs;
+﻿using Concept.Core.Abstracts;
+using Concept.Core.Structs;
 
-namespace Concept;
+namespace Concept.Core;
 
 public abstract class Individual(string? name, params EntityAndRelation[] relationsWithOthers) : Entity(name, relationsWithOthers);

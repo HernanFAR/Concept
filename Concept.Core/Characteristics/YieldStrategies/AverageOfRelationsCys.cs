@@ -1,11 +1,10 @@
-﻿using Concept.Abstracts;
-using Concept.Extensions;
-using Concept.Structs;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http.Headers;
+using Concept.Core.Abstracts;
+using Concept.Core.Extensions;
+using Concept.Core.Structs;
 
-namespace Concept.Characteristics.YieldStrategies;
+namespace Concept.Core.Characteristics.YieldStrategies;
 
 public class AverageOfRelationsCys(Entity entity) : CharacteristicYieldStrategy(entity)
 {

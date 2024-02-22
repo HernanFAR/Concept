@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
-using Concept.Abstracts;
+using Concept.Core.Abstracts;
 
-namespace Concept.Interfaces;
+namespace Concept.Core.Interfaces;
 
 public interface ICharacteristicComparer : IEqualityComparer<Characteristic>;
