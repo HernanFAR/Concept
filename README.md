@@ -1,5 +1,5 @@
 # Concept
-A library oriented to serve a society-like functionality in C# Game Development.
+A dependency-free library oriented to serve a society-like functionality in C# Game Development.
 
 ## Origins
 Literally born in two sessions of magic brownies, the library is a set of classes, behaviors and utitilies to easily implement an auto-growing and auto-managed funcionalities, like society, in games develop in C# lang.
