@@ -3,17 +3,14 @@ using System.Collections.Generic;
 
 namespace Concept.Core.Abstracts;
 
-public record StrategyContext(Entity PointOfView);
 
-public abstract class CharacteristicYieldStrategy(Entity fromEntity) : IEnumerable<Characteristic>
+public abstract class CharacteristicYieldStrategy(Entity YieldFrom) : IEnumerable<Characteristic>
 {
-    protected Entity FromEntity { get; } = fromEntity;
-    protected StrategyContext? Context { get; private set; } 
+    public record StrategyContext(Entity? PointOfView);
 
-    public void SetContext(StrategyContext context)
-    {
-        Context = context;
-    }
+    protected Entity YieldFrom { get; } = YieldFrom;
+
+    public StrategyContext? Context { get; set; } 
 
     public abstract IEnumerator<Characteristic> GetEnumerator();
 

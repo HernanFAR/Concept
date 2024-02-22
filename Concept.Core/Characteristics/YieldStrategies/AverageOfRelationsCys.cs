@@ -5,16 +5,11 @@ using System.Linq;
 
 namespace Concept.Core.Characteristics.YieldStrategies;
 
-public class AverageOfRelationsCys(Entity fromEntity) : CharacteristicYieldStrategy(fromEntity)
+public class AverageOfRelationsCys(Entity yieldFrom) : CharacteristicYieldStrategy(yieldFrom)
 {
     public override IEnumerator<Characteristic> GetEnumerator()
     {
-        if (Context is null)
-        {
-            throw new System.InvalidOperationException("Strategy context not set");
-        }
-
-        IEnumerable<Characteristic> allCharacteristics = FromEntity.Relations
+        IEnumerable<Characteristic> allCharacteristics = YieldFrom.Relations
             .Select(e => e.Key)
             .SelectMany(e => e.Characteristics);
 
@@ -26,14 +21,18 @@ public class AverageOfRelationsCys(Entity fromEntity) : CharacteristicYieldStrat
 
             foreach (var key in dictionaryContext.Keys)
             {
-                // If the Context.PointOfView's comparer DOES NOT trates the same this characteristic and
-                // the current in the key, then continue to the next key
-                if (Context.PointOfView.GetRelationContext(FromEntity).CharComparer.Equals(key, @char) is false)
+                if (Context?.PointOfView is null)
                 {
+                    dictionaryContext[@char] = dictionaryContext[@char].Append(key);
                     continue;
                 }
 
-                dictionaryContext[@char] = dictionaryContext[@char].Append(key);
+                // If the Context.PointOfView's comparer related to YieldFrom DOES think that this
+                // two characteristics are equal, then continue to the next key
+                if (Context.PointOfView.GetRelationContext(YieldFrom).CharComparer.Equals(key, @char) )
+                {
+                    dictionaryContext[@char] = dictionaryContext[@char].Append(key);
+                }
             }
         }
 
