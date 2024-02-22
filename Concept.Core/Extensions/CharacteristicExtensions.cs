@@ -1,5 +1,5 @@
 ﻿using System;
-using Concept.Core.Abstracts;
+using Concept.Core.Characteristics;
 
 namespace Concept.Core.Extensions;
 

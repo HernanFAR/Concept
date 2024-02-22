@@ -1,4 +1,4 @@
-﻿using Concept.Core.Abstracts;
+﻿using Concept.Core.Entities;
 using Concept.Core.Extensions;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +11,7 @@ namespace Concept.Core.Characteristics.YieldStrategies;
 /// <param name="yieldFrom">
 /// An entity to yield the characteristics from
 /// </param>
-public class AverageOfRelationsCys(Entity yieldFrom) : CharacteristicYieldStrategy(yieldFrom)
+public class RelationAverageCharacteristicYieldStrategy(Entity yieldFrom) : CharacteristicYieldStrategy(yieldFrom)
 {
     public override IEnumerator<Characteristic> GetEnumerator()
     {
@@ -33,9 +33,12 @@ public class AverageOfRelationsCys(Entity yieldFrom) : CharacteristicYieldStrate
                     continue;
                 }
 
+                var comparer = Context.PointOfView.GetRelationContext(YieldFrom)?.CharComparer 
+                               ?? Context.PointOfView.DefaultComparer;
+
                 // If the Context.PointOfView's comparer related to YieldFrom DOES think that this
                 // two characteristics are equal, then continue to the next key
-                if (Context.PointOfView.GetRelationContext(YieldFrom).CharComparer.Equals(key, @char) )
+                if (comparer.Equals(key, @char) )
                 {
                     dictionaryContext[@char] = dictionaryContext[@char].Append(key);
                 }

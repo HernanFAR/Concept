@@ -1,7 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Concept.Core.Entities;
 
-namespace Concept.Core.Abstracts;
+namespace Concept.Core.Characteristics.YieldStrategies;
 
 /// <summary>
 /// Represents a way to yield characteristics from an entity
@@ -22,7 +23,7 @@ public abstract class CharacteristicYieldStrategy(Entity yieldFrom) : IEnumerabl
 
         public void Deconstruct(out Entity? pointOfView)
         {
-            pointOfView = this.PointOfView;
+            pointOfView = PointOfView;
         }
     }
 
@@ -35,8 +36,8 @@ public abstract class CharacteristicYieldStrategy(Entity yieldFrom) : IEnumerabl
     /// The context of use
     /// </summary>
     /// <remarks>If any, might alter the strategy</remarks>
-    public StrategyContext? Context { get; set; } 
-    
+    public StrategyContext? Context { get; set; }
+
     public abstract IEnumerator<Characteristic> GetEnumerator();
 
     IEnumerator IEnumerable.GetEnumerator()

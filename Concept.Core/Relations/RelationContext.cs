@@ -1,17 +1,22 @@
-﻿using Concept.Core.Abstracts;
-using Concept.Core.Interfaces;
+﻿using Concept.Core.Entities;
 
 namespace Concept.Core.Relations;
 
 /// <summary>
-/// An object that represents characteristics of relation between two entities
+/// Represents key elements of relation between two <see cref="Entity"/> instances
 /// </summary>
+/// <param name="with">Related <see cref="Entity"/></param>
 /// <param name="kind">The kind of relation</param>
 /// <param name="charComparer">
 /// A comparer used when dealing with characteristics of the related <see cref="Entity"/>
 /// </param>
-public readonly struct RelationContext(RelationKind kind, ICharacteristicComparer charComparer)
+public readonly struct RelationContext(Entity with, RelationKind kind, ICharacteristicComparer charComparer)
 {
+    /// <summary>
+    /// The related <see cref="Entity"/>
+    /// </summary>
+    public Entity With { get; } = with;
+
     /// <summary>
     /// The kind of relation
     /// </summary>
@@ -24,7 +29,7 @@ public readonly struct RelationContext(RelationKind kind, ICharacteristicCompare
 
     public void Deconstruct(out RelationKind kind, out ICharacteristicComparer charComparer)
     {
-        kind = this.Kind;
-        charComparer = this.CharComparer;
+        kind = Kind;
+        charComparer = CharComparer;
     }
 }
