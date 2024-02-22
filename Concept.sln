@@ -15,6 +15,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{239E928D-E01
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Concept.Core", "src\Concept.Core\Concept.Core.csproj", "{7C00F658-60CA-4AF5-82C4-7C8C66377893}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{7D7F504A-EB2A-4914-A870-DAF646738558}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Concept.Core.Tests", "tests\Concept.Core.Tests\Concept.Core.Tests.csproj", "{5FFBE6CB-D196-4E7A-9368-949BCBAAA1BC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -25,12 +29,17 @@ Global
 		{7C00F658-60CA-4AF5-82C4-7C8C66377893}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7C00F658-60CA-4AF5-82C4-7C8C66377893}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7C00F658-60CA-4AF5-82C4-7C8C66377893}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5FFBE6CB-D196-4E7A-9368-949BCBAAA1BC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5FFBE6CB-D196-4E7A-9368-949BCBAAA1BC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5FFBE6CB-D196-4E7A-9368-949BCBAAA1BC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5FFBE6CB-D196-4E7A-9368-949BCBAAA1BC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{7C00F658-60CA-4AF5-82C4-7C8C66377893} = {239E928D-E01A-4D6B-B015-F195DA4DC8BC}
+		{5FFBE6CB-D196-4E7A-9368-949BCBAAA1BC} = {7D7F504A-EB2A-4914-A870-DAF646738558}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E759842E-033A-46A5-BFA8-DDBF54274156}
