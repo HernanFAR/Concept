@@ -1,30 +1,34 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using Concept.Core.Abstracts;
+﻿using Concept.Core.Abstracts;
 using Concept.Core.Extensions;
-using Concept.Core.Structs;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Concept.Core.Characteristics.YieldStrategies;
 
-public class AverageOfRelationsCys(Entity entity) : CharacteristicYieldStrategy(entity)
+public class AverageOfRelationsCys(Entity fromEntity) : CharacteristicYieldStrategy(fromEntity)
 {
     public override IEnumerator<Characteristic> GetEnumerator()
     {
-        IEnumerable<CharAndComparer> allCharAndComparers = Entity.RelationsWithOthers
-            .Select(e => e.Entity)
+        if (Context is null)
+        {
+            throw new System.InvalidOperationException("Strategy context not set");
+        }
+
+        IEnumerable<Characteristic> allCharacteristics = FromEntity.Relations
+            .Select(e => e.Key)
             .SelectMany(e => e.Characteristics);
 
         Dictionary<Characteristic, IEnumerable<Characteristic>> dictionaryContext = [];
 
-        foreach (var (@char, comparer) in allCharAndComparers)
+        foreach (var @char in allCharacteristics)
         {
             dictionaryContext[@char] = Enumerable.Empty<Characteristic>();
-            
+
             foreach (var key in dictionaryContext.Keys)
             {
-                // If the entity's comparer DOES NOT trates the same this characteristic and
+                // If the Context.PointOfView's comparer DOES NOT trates the same this characteristic and
                 // the current in the key, then continue to the next key
-                if (comparer.Equals(key, @char) is false)
+                if (Context.PointOfView.GetRelationContext(FromEntity).CharComparer.Equals(key, @char) is false)
                 {
                     continue;
                 }
