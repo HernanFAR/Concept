@@ -5,6 +5,12 @@ using System.Linq;
 
 namespace Concept.Core.Characteristics.YieldStrategies;
 
+/// <summary>
+/// A characteristic yield strategy that yields the average of the relations of the entity
+/// </summary>
+/// <param name="yieldFrom">
+/// An entity to yield the characteristics from
+/// </param>
 public class AverageOfRelationsCys(Entity yieldFrom) : CharacteristicYieldStrategy(yieldFrom)
 {
     public override IEnumerator<Characteristic> GetEnumerator()

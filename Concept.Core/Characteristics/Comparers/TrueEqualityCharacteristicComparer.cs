@@ -4,6 +4,9 @@ using Concept.Core.Interfaces;
 
 namespace Concept.Core.Characteristics.Comparers;
 
+/// <summary>
+/// A characteristic comparer that uses the name to compare two characteristics
+/// </summary>
 public class TrueEqualityCharacteristicComparer : ICharacteristicComparer
 {
     public static ICharacteristicComparer Instance { get; } = new TrueEqualityCharacteristicComparer();
