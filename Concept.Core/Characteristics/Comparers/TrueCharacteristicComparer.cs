@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Concept.Core.Characteristics.Comparers;
 
@@ -8,9 +9,9 @@ namespace Concept.Core.Characteristics.Comparers;
 /// <remarks>
 /// Performs a "true comparison", because is based on the name of the characteristic
 /// </remarks>
-public class TrueCharacteristicComparer : CharacteristicComparer
+public sealed class TrueCharacteristicComparer : IEqualityComparer<Characteristic>
 {
-    public static CharacteristicComparer Instance { get; } = new TrueCharacteristicComparer();
+    public static IEqualityComparer<Characteristic> Instance { get; } = new TrueCharacteristicComparer();
 
     private TrueCharacteristicComparer() { }
 

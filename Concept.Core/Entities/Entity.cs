@@ -18,20 +18,24 @@ namespace Concept.Core.Entities;
 /// </remarks>
 /// <param name="name">The name of the entity</param>
 /// <param name="relations">The relations of this Entity with others</param>
-public abstract class Entity(
-    string? name,
-    IRelationDictionary relations)
+public abstract class Entity
 {
+    protected Entity(string? name)
+    {
+        Name = name;
+        Relations = new RelationDictionary(this);
+    }
+
     /// <summary>
     /// The name of the entity
     /// </summary>
-    public string? Name { get; } = name;
+    public string? Name { get; }
 
     /// TODO: If the entity can't interact with others, then it cannot have relations, only characteristics
     /// <summary>
     /// The relations of this Entity with others
     /// </summary>
-    public IRelationDictionary Relations { get; } = relations;
+    public RelationDictionary Relations { get; }
 
     /// <summary>
     /// The personality traits of this entity

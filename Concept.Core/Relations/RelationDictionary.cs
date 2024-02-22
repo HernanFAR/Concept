@@ -5,9 +5,11 @@ using Concept.Core.Entities;
 
 namespace Concept.Core.Relations;
 
-public sealed class RelationDictionary : IRelationDictionary
+public sealed class RelationDictionary(Entity relatedWith) : IDictionary<Entity, RelationContext>
 {
     private readonly IDictionary<Entity, RelationContext> _internalDictionary = new Dictionary<Entity, RelationContext>();
+
+    public Entity RelatedWith { get; } = relatedWith;
 
     public IEnumerator<KeyValuePair<Entity, RelationContext>> GetEnumerator()
     {
@@ -90,4 +92,5 @@ public sealed class RelationDictionary : IRelationDictionary
     public ICollection<Entity> Keys => _internalDictionary.Keys;
 
     public ICollection<RelationContext> Values => _internalDictionary.Values;
+
 }

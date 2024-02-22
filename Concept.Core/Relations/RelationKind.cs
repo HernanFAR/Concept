@@ -41,9 +41,4 @@ public sealed class RelationKind
     /// </summary>
     public RelationKind[] DerivesFrom { get; }
 
-    /// <summary>
-    /// A <see cref="RelationKind"/> that has no impact
-    /// </summary>
-    public static RelationKind Blank
-        => new("Vacío", "Existe relación, pero no hay algo que destacar", 0, []);
 }

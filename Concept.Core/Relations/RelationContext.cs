@@ -1,4 +1,5 @@
-﻿using Concept.Core.Entities;
+﻿using Concept.Core.Characteristics.Comparers;
+using Concept.Core.Entities;
 
 namespace Concept.Core.Relations;
 
@@ -10,7 +11,7 @@ namespace Concept.Core.Relations;
 /// <param name="charComparer">
 /// A comparer used when dealing with characteristics of the related <see cref="Entity"/>
 /// </param>
-public readonly struct RelationContext(Entity with, RelationKind kind, ICharacteristicComparer charComparer)
+public readonly struct RelationContext(Entity with, RelationKind kind, byte relevance, CharacteristicComparer charComparer)
 {
     /// <summary>
     /// The related <see cref="Entity"/>
@@ -23,13 +24,19 @@ public readonly struct RelationContext(Entity with, RelationKind kind, ICharacte
     public RelationKind Kind { get; } = kind;
 
     /// <summary>
+    /// The relevance of the relation
+    /// </summary>
+    public byte Relevance { get; } = relevance;
+
+    /// <summary>
     /// The comparer to use when comparing characteristics of the related <see cref="Entity"/>
     /// </summary>
-    public ICharacteristicComparer CharComparer { get; } = charComparer;
+    public CharacteristicComparer CharComparer { get; } = charComparer;
 
-    public void Deconstruct(out RelationKind kind, out ICharacteristicComparer charComparer)
+    public void Deconstruct(out RelationKind kind, out byte relevance, out CharacteristicComparer charComparer)
     {
         kind = Kind;
+        relevance = Relevance;
         charComparer = CharComparer;
     }
 }
