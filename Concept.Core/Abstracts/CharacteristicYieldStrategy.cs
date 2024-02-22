@@ -10,10 +10,21 @@ namespace Concept.Core.Abstracts;
 public abstract class CharacteristicYieldStrategy(Entity yieldFrom) : IEnumerable<Characteristic>
 {
     /// <summary>
-    /// A context in which the strategy is being used, that might alter the strategy
+    /// Context of use, that can alter the strategy output
     /// </summary>
-    /// <param name="PointOfView">An <see cref="Entity"/> that is analyzing the characteristics of <see cref="YieldFrom"/> </param>
-    public record StrategyContext(Entity? PointOfView);
+    /// <param name="pointOfView">An optional <see cref="Entity"/> that is analyzing the characteristics of <see cref="YieldFrom"/> </param>
+    public class StrategyContext(Entity? pointOfView)
+    {
+        /// <summary>
+        /// An optional <see cref="Entity"/> that is analyzing the characteristics of <see cref="YieldFrom"/>
+        /// </summary>
+        public Entity? PointOfView { get; } = pointOfView;
+
+        public void Deconstruct(out Entity? pointOfView)
+        {
+            pointOfView = this.PointOfView;
+        }
+    }
 
     /// <summary>
     /// A reference to the entity that the strategy is yielding characteristics from

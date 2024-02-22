@@ -1,4 +1,4 @@
-﻿namespace Concept.Core;
+﻿namespace Concept.Core.Relations;
 
 /// <summary>
 /// A representation of a kind of relation between two entities

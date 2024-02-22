@@ -1,5 +1,5 @@
 ﻿using Concept.Core.Interfaces;
-using Concept.Core.Structs;
+using Concept.Core.Relations;
 using System;
 using System.Collections.Generic;
 
