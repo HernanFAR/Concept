@@ -20,7 +20,7 @@ public abstract class CharacteristicComparer : IEqualityComparer<Characteristic>
     /// <param name="left">Characteristic</param>
     /// <param name="right">Characteristic</param>
     /// <returns>True if are equals in the current context, false if not</returns>
-    public abstract bool Equals(Characteristic left, Characteristic right);
+    public abstract bool Equals(Characteristic? left, Characteristic? right);
 
     /// <summary>
     /// Gets the hash code of a <see cref="Characteristic"/> instance

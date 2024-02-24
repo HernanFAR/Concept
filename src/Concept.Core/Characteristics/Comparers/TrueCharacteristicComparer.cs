@@ -16,7 +16,7 @@ public sealed class TrueCharacteristicComparer : CharacteristicComparer
     /// </summary>
     public static CharacteristicComparer Instance { get; } = new TrueCharacteristicComparer();
 
-    private TrueCharacteristicComparer() { }
+    TrueCharacteristicComparer() { }
 
     /// <inheritdoc />
     public override bool Equals(Characteristic? left, Characteristic? right)
@@ -32,6 +32,6 @@ public sealed class TrueCharacteristicComparer : CharacteristicComparer
     /// <inheritdoc />
     public override int GetHashCode(Characteristic obj)
     {
-        return HashCode.Combine(obj.Name, obj.Description, obj.Value);
+        return HashCode.Combine(obj.Name);
     }
 }
