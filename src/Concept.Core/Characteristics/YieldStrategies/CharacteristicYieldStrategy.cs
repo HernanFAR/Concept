@@ -1,43 +1,32 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using Concept.Core.Entities;
+using Concept.Core.Nodes;
 
 namespace Concept.Core.Characteristics.YieldStrategies;
 
 /// <summary>
 /// Represents a way to yield characteristics from an entity
 /// </summary>
-/// <param name="yieldFrom">Entity to yield characteristics </param>
-public abstract class CharacteristicYieldStrategy(Entity yieldFrom) : IEnumerable<Characteristic>
+/// <param name="yieldFrom"><see cref="Node"/> to yield characteristics</param>
+public abstract class CharacteristicYieldStrategy(Node yieldFrom) : IEnumerable<Characteristic>
 {
     /// <summary>
-    /// Context of use, that can alter the strategy output
+    /// The <see cref="Node"/> to yield characteristics from
     /// </summary>
-    /// <param name="pointOfView">An optional <see cref="Entity"/> that is analyzing the characteristics of <see cref="YieldFrom"/> </param>
-    public class StrategyContext(Entity? pointOfView)
-    {
-        /// <summary>
-        /// An optional <see cref="Entity"/> that is analyzing the characteristics of <see cref="YieldFrom"/>
-        /// </summary>
-        public Entity? PointOfView { get; } = pointOfView;
-
-        public void Deconstruct(out Entity? pointOfView)
-        {
-            pointOfView = PointOfView;
-        }
-    }
+    protected Node YieldFrom { get; } = yieldFrom;
 
     /// <summary>
-    /// A reference to the entity that the strategy is yielding characteristics from
+    /// The context of execution of the characteristic yield strategy
     /// </summary>
-    protected Entity YieldFrom { get; } = yieldFrom;
+    /// <remarks>If any, might alter strategy output</remarks>
+    public ExecutionContext? Context { get; set; }
 
     /// <summary>
-    /// The context of use
+    /// Yields characteristics from the <see cref="YieldFrom"/> <see cref="Node"/> instance
     /// </summary>
-    /// <remarks>If any, might alter the strategy</remarks>
-    public StrategyContext? Context { get; set; }
-
+    /// <returns>
+    /// A sequence of <see cref="Characteristic"/> instances
+    /// </returns>
     public abstract IEnumerator<Characteristic> GetEnumerator();
 
     IEnumerator IEnumerable.GetEnumerator()

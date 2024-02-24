@@ -1,0 +1,22 @@
+<Project>
+	<PropertyGroup>
+		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+		<Authors>Enryu20</Authors>
+		<Product>Concept</Product>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<Copyright>Hernán Fernando Álvarez Rubio</Copyright>
+		<PackageProjectUrl>https://concept.readthedocs.io/en/latest/</PackageProjectUrl>
+		<RepositoryUrl>https://github.com/HernanFAR/Concept</RepositoryUrl>
+		<PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
+		<PackageLicenseFile>LICENSE</PackageLicenseFile>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+		<PackageIcon>icon.png</PackageIcon>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<None Include="..\..\icon.png">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+		</None>
+	</ItemGroup>
+</Project>

@@ -1,8 +1,11 @@
-﻿using System;
-using Concept.Core.Characteristics;
+﻿using Concept.Core.Characteristics;
+using System;
 
 namespace Concept.Core.Extensions;
 
+/// <summary>
+/// Extension methods for <see cref="Characteristic"/> instances
+/// </summary>
 public static class CharacteristicExtensions
 {
     /// <summary>

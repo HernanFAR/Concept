@@ -1,5 +1,4 @@
-﻿using Concept.Core.Entities;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace Concept.Core.Characteristics.Comparers;
 
@@ -9,29 +8,26 @@ namespace Concept.Core.Characteristics.Comparers;
 public abstract class CharacteristicComparer : IEqualityComparer<Characteristic>
 {
     /// <summary>
-    /// Context of use, that can alter the comparision output
+    /// The context of execution of the equality comparison
     /// </summary>
-    /// <param name="pointOfView">An optional <see cref="Entity"/> that is analyzing comparision</param>
-    public class ComparisionContext(Entity? pointOfView)
-    {
-        /// <summary>
-        /// An optional <see cref="Entity"/> that is analyzing the comparision
-        /// </summary>
-        public Entity? PointOfView { get; } = pointOfView;
-
-        public void Deconstruct(out Entity? pointOfView)
-        {
-            pointOfView = PointOfView;
-        }
-    }
+    /// <remarks>If any, might alter strategy output</remarks>
+    public ExecutionContext? Context { get; set; }
 
     /// <summary>
-    /// The context of use
+    /// Determines if two <see cref="Characteristic"/> instances are equal, based on
+    /// the current context
     /// </summary>
-    /// <remarks>If any, might alter the strategy</remarks>
-    public ComparisionContext? Context { get; set; }
+    /// <param name="left">Characteristic</param>
+    /// <param name="right">Characteristic</param>
+    /// <returns>True if are equals in the current context, false if not</returns>
+    public abstract bool Equals(Characteristic left, Characteristic right);
 
-    public abstract bool Equals(Characteristic x, Characteristic y);
-
+    /// <summary>
+    /// Gets the hash code of a <see cref="Characteristic"/> instance
+    /// </summary>
+    /// <param name="obj">Characteristic</param>
+    /// <returns>
+    /// Hash code of the instance
+    /// </returns>
     public abstract int GetHashCode(Characteristic obj);
 }

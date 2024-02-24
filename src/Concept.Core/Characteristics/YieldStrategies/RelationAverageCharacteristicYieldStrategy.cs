@@ -1,5 +1,6 @@
-﻿using Concept.Core.Entities;
+﻿using Concept.Core.Characteristics.Comparers;
 using Concept.Core.Extensions;
+using Concept.Core.Nodes;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -11,8 +12,10 @@ namespace Concept.Core.Characteristics.YieldStrategies;
 /// <param name="yieldFrom">
 /// An entity to yield the characteristics from
 /// </param>
-public class RelationAverageCharacteristicYieldStrategy(Entity yieldFrom) : CharacteristicYieldStrategy(yieldFrom)
+public class RelationAverageCharacteristicYieldStrategy(Node yieldFrom)
+    : CharacteristicYieldStrategy(yieldFrom)
 {
+    /// <inheritdoc />
     public override IEnumerator<Characteristic> GetEnumerator()
     {
         IEnumerable<Characteristic> allCharacteristics = YieldFrom.Relations
@@ -21,11 +24,11 @@ public class RelationAverageCharacteristicYieldStrategy(Entity yieldFrom) : Char
 
         Dictionary<Characteristic, IEnumerable<Characteristic>> dictionaryContext = [];
 
-        foreach (var @char in allCharacteristics)
+        foreach (Characteristic @char in allCharacteristics)
         {
             dictionaryContext[@char] = Enumerable.Empty<Characteristic>();
 
-            foreach (var key in dictionaryContext.Keys)
+            foreach (Characteristic key in dictionaryContext.Keys)
             {
                 if (Context?.PointOfView is null)
                 {
@@ -33,20 +36,19 @@ public class RelationAverageCharacteristicYieldStrategy(Entity yieldFrom) : Char
                     continue;
                 }
 
-                var comparer = Context.PointOfView.GetRelationContext(YieldFrom)?.CharComparer 
-                               ?? Context.PointOfView.DefaultComparer;
+                CharacteristicComparer comparer = Context.PointOfView.GetRelationContext(YieldFrom)?.CharComparer
+                                                  ?? Context.PointOfView.DefaultComparer;
 
                 // If the Context.PointOfView's comparer related to YieldFrom DOES think that this
                 // two characteristics are equal, then continue to the next key
-                if (comparer.Equals(key, @char) )
+                if (comparer.Equals(key, @char))
                 {
                     dictionaryContext[@char] = dictionaryContext[@char].Append(key);
                 }
             }
         }
 
-        // ReSharper disable once SuggestVarOrType_DeconstructionDeclarations
-        foreach (var (@char, values) in dictionaryContext)
+        foreach ((Characteristic? @char, IEnumerable<Characteristic>? values) in dictionaryContext)
         {
             var average = (byte)values.Average(c => c.Value);
 

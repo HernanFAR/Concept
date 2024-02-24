@@ -1,31 +1,36 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace Concept.Core.Characteristics.Comparers;
 
 /// <summary>
-/// A characteristic comparer that uses the name to compare two characteristics
+/// A <see cref="CharacteristicComparer"/> implementation that uses the name to compare
+/// two characteristics
 /// </summary>
 /// <remarks>
 /// Performs a "true comparison", because is based on the name of the characteristic
 /// </remarks>
-public sealed class TrueCharacteristicComparer : IEqualityComparer<Characteristic>
+public sealed class TrueCharacteristicComparer : CharacteristicComparer
 {
-    public static IEqualityComparer<Characteristic> Instance { get; } = new TrueCharacteristicComparer();
+    /// <summary>
+    /// The only instance of this class
+    /// </summary>
+    public static CharacteristicComparer Instance { get; } = new TrueCharacteristicComparer();
 
     private TrueCharacteristicComparer() { }
 
-    public bool Equals(Characteristic? x, Characteristic? y)
+    /// <inheritdoc />
+    public override bool Equals(Characteristic? left, Characteristic? right)
     {
-        if (ReferenceEquals(x, y)) return true;
-        if (x is null) return false;
-        if (y is null) return false;
-        if (x.GetType() != y.GetType()) return false;
+        if (ReferenceEquals(left, right)) return true;
+        if (right is null) return false;
+        if (left is null) return false;
+        if (right.GetType() != left.GetType()) return false;
 
-        return x.Name == y.Name;
+        return right.Name == left.Name;
     }
 
-    public int GetHashCode(Characteristic obj)
+    /// <inheritdoc />
+    public override int GetHashCode(Characteristic obj)
     {
         return HashCode.Combine(obj.Name, obj.Description, obj.Value);
     }

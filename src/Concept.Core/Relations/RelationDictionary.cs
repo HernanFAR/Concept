@@ -1,17 +1,27 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using Concept.Core.Entities;
+using Concept.Core.Nodes;
 
 namespace Concept.Core.Relations;
 
-public sealed class RelationDictionary(Entity relatedWith) : IDictionary<Entity, RelationContext>
+/// <summary>
+/// Represents a dictionary of relations between a <see cref="Node"/> instance and other <see cref="Node"/> instances
+/// </summary>
+/// <param name="relatedWith">
+/// The <see cref="Node"/> that is related with the others
+/// </param>
+public sealed class RelationDictionary(Node relatedWith) : IDictionary<Node, RelationContext>
 {
-    private readonly IDictionary<Entity, RelationContext> _internalDictionary = new Dictionary<Entity, RelationContext>();
+    private readonly IDictionary<Node, RelationContext> _internalDictionary = new Dictionary<Node, RelationContext>();
 
-    public Entity RelatedWith { get; } = relatedWith;
+    /// <summary>
+    /// The <see cref="Node"/> that is related with the others
+    /// </summary>
+    public Node RelatedWith { get; } = relatedWith;
 
-    public IEnumerator<KeyValuePair<Entity, RelationContext>> GetEnumerator()
+    /// <inheritdoc />
+    public IEnumerator<KeyValuePair<Node, RelationContext>> GetEnumerator()
     {
         return _internalDictionary.GetEnumerator();
     }
@@ -21,61 +31,79 @@ public sealed class RelationDictionary(Entity relatedWith) : IDictionary<Entity,
         return ((IEnumerable)_internalDictionary).GetEnumerator();
     }
 
-    public void Add(KeyValuePair<Entity, RelationContext> item)
+    /// <inheritdoc />
+    public void Add(KeyValuePair<Node, RelationContext> item)
     {
         _internalDictionary.Add(item);
     }
 
+    /// <inheritdoc />
     public void Clear()
     {
         _internalDictionary.Clear();
     }
 
-    public bool Contains(KeyValuePair<Entity, RelationContext> item)
+    /// <inheritdoc />
+    public bool Contains(KeyValuePair<Node, RelationContext> item)
     {
         return _internalDictionary.Contains(item);
     }
 
-    public void CopyTo(KeyValuePair<Entity, RelationContext>[] array, int arrayIndex)
+    /// <inheritdoc />
+    public void CopyTo(KeyValuePair<Node, RelationContext>[] array, int arrayIndex)
     {
         _internalDictionary.CopyTo(array, arrayIndex);
     }
 
-    public bool Remove(KeyValuePair<Entity, RelationContext> item)
+    /// <inheritdoc />
+    public bool Remove(KeyValuePair<Node, RelationContext> item)
     {
         return _internalDictionary.Remove(item);
     }
 
+    /// <inheritdoc />
     public int Count => _internalDictionary.Count;
 
+    /// <inheritdoc />
     public bool IsReadOnly => _internalDictionary.IsReadOnly;
 
-    public void Add(Entity key, RelationContext value)
+    /// <inheritdoc />
+    public void Add(Node key, RelationContext value)
     {
         _internalDictionary.Add(key, value);
     }
-
+    
+    /// <summary>
+    /// Adds a relation to the dictionary
+    /// </summary>
+    /// <param name="value">
+    /// The <see cref="RelationContext"/> to add
+    /// </param>
     public void Add(RelationContext value)
     {
         _internalDictionary.Add(value.With, value);
     }
 
-    public bool ContainsKey(Entity key)
+    /// <inheritdoc />
+    public bool ContainsKey(Node key)
     {
         return _internalDictionary.ContainsKey(key);
     }
 
-    public bool Remove(Entity key)
+    /// <inheritdoc />
+    public bool Remove(Node key)
     {
         return _internalDictionary.Remove(key);
     }
 
-    public bool TryGetValue(Entity key, out RelationContext value)
+    /// <inheritdoc />
+    public bool TryGetValue(Node key, out RelationContext value)
     {
         return _internalDictionary.TryGetValue(key, out value);
     }
 
-    public RelationContext this[Entity key]
+    /// <inheritdoc />
+    public RelationContext this[Node key]
     {
         get => _internalDictionary[key];
         set
@@ -89,8 +117,10 @@ public sealed class RelationDictionary(Entity relatedWith) : IDictionary<Entity,
         }
     }
 
-    public ICollection<Entity> Keys => _internalDictionary.Keys;
+    /// <inheritdoc />
+    public ICollection<Node> Keys => _internalDictionary.Keys;
 
+    /// <inheritdoc />
     public ICollection<RelationContext> Values => _internalDictionary.Values;
 
 }

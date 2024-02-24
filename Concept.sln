@@ -7,6 +7,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Elementos de la solución",
 	ProjectSection(SolutionItems) = preProject
 		.gitattributes = .gitattributes
 		.gitignore = .gitignore
+		.readthedocs.yaml = .readthedocs.yaml
 		LICENSE.txt = LICENSE.txt
 		README.md = README.md
 	EndProjectSection
@@ -17,7 +18,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Concept.Core", "src\Concept
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{7D7F504A-EB2A-4914-A870-DAF646738558}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Concept.Core.Tests", "tests\Concept.Core.Tests\Concept.Core.Tests.csproj", "{5FFBE6CB-D196-4E7A-9368-949BCBAAA1BC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Concept.Core.Tests", "tests\Concept.Core.Tests\Concept.Core.Tests.csproj", "{5FFBE6CB-D196-4E7A-9368-949BCBAAA1BC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

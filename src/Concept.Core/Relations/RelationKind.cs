@@ -3,7 +3,7 @@
 /// <summary>
 /// A representation of a kind of relation between two entities
 /// </summary>
-public sealed class RelationKind
+public abstract class RelationKind
 {
     /// <summary>
     /// Instances a relation kind
@@ -12,7 +12,7 @@ public sealed class RelationKind
     /// <param name="description">A description</param>
     /// <param name="value">An impact value</param>
     /// <param name="derivesFrom">The others relation kinds that this relation derives from</param>
-    private RelationKind(string name, string description, sbyte value,
+    protected RelationKind(string name, string description, sbyte value,
         RelationKind[] derivesFrom)
     {
         Name = name;

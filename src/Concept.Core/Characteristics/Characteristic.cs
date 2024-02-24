@@ -1,11 +1,10 @@
-﻿using System;
-using Concept.Core.Entities;
+﻿using Concept.Core.Nodes;
+using System;
 
 namespace Concept.Core.Characteristics;
 
 /// <summary>
-/// Essentially represents a custom part of an <see cref="Entity" /> of a given context.
-/// Examples: feature, trait of personality, etc.
+/// Essentially represents a custom part of a <see cref="Node" />, like a feature, a trait of personality, etc.
 /// </summary>
 /// <remarks>
 /// Its identity is not reference-based, is value-based on <see cref="Name" />, so different
@@ -34,8 +33,14 @@ public abstract class Characteristic(byte value) : IEquatable<Characteristic>
     /// </remarks>
     public byte Value { get; } = value;
 
+    /// <inheritdoc />
     public override string ToString() => $"{Name}: {Value}";
 
+    /// <summary>
+    /// Performs a true comparison between two <see cref="Characteristic"/> instances
+    /// </summary>
+    /// <param name="other"></param>
+    /// <returns></returns>
     public bool Equals(Characteristic? other)
     {
         if (other is null) return false;
@@ -44,6 +49,7 @@ public abstract class Characteristic(byte value) : IEquatable<Characteristic>
         return Name == other.Name;
     }
 
+    /// <inheritdoc />
     public override bool Equals(object? obj)
     {
         if (obj is null) return false;
@@ -53,16 +59,29 @@ public abstract class Characteristic(byte value) : IEquatable<Characteristic>
         return Equals((Characteristic)obj);
     }
 
+    /// <inheritdoc />
     public override int GetHashCode()
     {
         return Name.GetHashCode();
     }
 
+    /// <summary>
+    /// Determines if two <see cref="Characteristic"/> instances are equal
+    /// </summary>
+    /// <param name="left">Left characteristic</param>
+    /// <param name="right">Right characteristic</param>
+    /// <returns>True if equals, false if not</returns>
     public static bool operator ==(Characteristic? left, Characteristic? right)
     {
         return Equals(left, right);
     }
 
+    /// <summary>
+    /// Determines if two <see cref="Characteristic"/> instances are not equal
+    /// </summary>
+    /// <param name="left">Left characteristic</param>
+    /// <param name="right">Right characteristic</param>
+    /// <returns>False if equals, true if not</returns>
     public static bool operator !=(Characteristic? left, Characteristic? right)
     {
         return !Equals(left, right);
