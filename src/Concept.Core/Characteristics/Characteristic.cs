@@ -5,11 +5,14 @@ namespace Concept.Core.Characteristics;
 
 /// <summary>
 /// Essentially represents a custom part of a <see cref="Node" />, like a feature, a trait of personality, etc.
-/// </summary>
-/// <remarks>
+/// <para>
 /// Its identity is not reference-based, is value-based on <see cref="Name" />, so different
 /// instances with the same name are considered equal when performing true comparision
+/// </para>
+/// <remarks>
+/// Every implementation of this class should be a sealed class with the same constructor signature
 /// </remarks>
+/// </summary>
 /// <param name="value">The value of the trait in the entity</param>
 public abstract class Characteristic(byte value) : IEquatable<Characteristic>
 {
@@ -52,11 +55,7 @@ public abstract class Characteristic(byte value) : IEquatable<Characteristic>
     /// <inheritdoc />
     public override bool Equals(object? obj)
     {
-        if (obj is null) return false;
-        if (ReferenceEquals(this, obj)) return true;
-        if (obj.GetType() != GetType()) return false;
-
-        return Equals((Characteristic)obj);
+        return Equals(obj as Characteristic);
     }
 
     /// <inheritdoc />

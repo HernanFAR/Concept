@@ -8,13 +8,21 @@
 		<PackageProjectUrl>https://concept.readthedocs.io/en/latest/</PackageProjectUrl>
 		<RepositoryUrl>https://github.com/HernanFAR/Concept</RepositoryUrl>
 		<PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
-		<PackageLicenseFile>LICENSE</PackageLicenseFile>
+		<PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 		<PackageIcon>icon.png</PackageIcon>
 	</PropertyGroup>
 
 	<ItemGroup>
 		<None Include="..\..\icon.png">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+		</None>
+		<None Include="..\..\README.md">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+		</None>
+		<None Include="..\..\LICENSE.txt">
 			<Pack>True</Pack>
 			<PackagePath>\</PackagePath>
 		</None>
