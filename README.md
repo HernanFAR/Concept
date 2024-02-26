@@ -1,22 +1,22 @@
 # Concept
-A dependency-free library oriented to serve a society-like functionality in C# Game Development.
+A dependency-free set of library oriented to serve anything that can be represented as a system of related nodes.
 
-## Origins
-Literally born in two sessions of magic brownies, the library is a set of classes, behaviors and utitilies to easily implement an auto-growing and auto-managed funcionalities, like society, in games develop in C# lang.
+## Detail
+Literally born in two sessions of magic brownies, the library is a set of classes, behaviors and utitilies to easily implement an auto-growing and auto-managed system of related nodes, in games develop in C# lang.
 
-Concept.Core library have the basic components to create a more specific interpretations of this idea. But, as an implementation of a abstract idea, it can have different interpretions, like the used in Concept.Society, which is general purpose society-like interpretation.
+The core library has the components to create anything that can be represented by a system of related nodes, but 
 
 ## Goals
 Reached goals:
-- Entity2Characteristic relationship-model
+- Node2Trait relationship-model
   - XML Documentation
-- Entity2Entity relationship-model
+- Node2Node relationship-model
   - XML Documentation
 
 In progress goals:
-- Entity2Characteristic documentation
-- Entity2Entity documentation
-- Entity2Entity Interation relationship-model.
+- Node2Trait documentation
+- Node2Node documentation
+- Node2Node Interation relationship-model.
   - XML and ReadTheDocs Documentation
 - Entity2Entity Effect relationship-model
   - XML and ReadTheDocs Documentation
