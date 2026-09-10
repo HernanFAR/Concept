@@ -4,9 +4,9 @@ namespace Concept.Core.Nodes;
 
 public abstract class Node
 {
-    private readonly IReadOnlyDictionary<CharacteristicSetId, ICharacteristicSetState> _sets;
+    private readonly IReadOnlyDictionary<CharacteristicSetId, CharacteristicSetState> _sets;
 
-    protected Node(NodeId id, IEnumerable<ICharacteristicSetState>? characteristicSets = null)
+    protected Node(NodeId id, IEnumerable<CharacteristicSetState>? characteristicSets = null)
     {
         Id = id;
         var sets = (characteristicSets ?? []).ToArray();
@@ -19,16 +19,15 @@ public abstract class Node
     }
 
     public NodeId Id { get; }
-    public IReadOnlyCollection<ICharacteristicSetState> CharacteristicSets => _sets.Values;
+    public IReadOnlyCollection<CharacteristicSetState> CharacteristicSets => _sets.Values;
 
-    public bool TryGetCharacteristicSet<TScalar>(
+    public bool TryGetCharacteristicSet(
         CharacteristicSetId id,
-        out CharacteristicSetState<TScalar>? state)
-        where TScalar : IComparable<TScalar>
+        out CharacteristicSetState? state)
     {
-        if (_sets.TryGetValue(id, out var candidate) && candidate is CharacteristicSetState<TScalar> typed)
+        if (_sets.TryGetValue(id, out var candidate))
         {
-            state = typed;
+            state = candidate;
             return true;
         }
 
