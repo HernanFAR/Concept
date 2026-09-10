@@ -1,26 +1,21 @@
 # Concept
-A dependency-free set of library oriented to serve anything that can be represented as a system of related nodes.
 
-## Detail
-Literally born in two sessions of magic brownies, the library is a set of classes, behaviors and utitilies to easily implement an auto-growing and auto-managed system of related nodes, in games develop in C# lang.
+Concept explores a compact model for simulating individuals, groups and societies as systems of related nodes.
 
-The core library has the components to create anything that can be represented by a system of related nodes, but 
+The current branch intentionally contains **no implementation**. It freezes the conceptual model before code is written again.
 
-## Goals
-Reached goals:
-- Node2Trait relationship-model
-  - XML Documentation
-- Node2Node relationship-model
-  - XML Documentation
+## Status
 
-In progress goals:
-- Node2Trait documentation
-- Node2Node documentation
-- Node2Node Interation relationship-model.
-  - XML and ReadTheDocs Documentation
-- Entity2Entity Effect relationship-model
-  - XML and ReadTheDocs Documentation
+**Conceptual model v0.1 — frozen for experimentation.**
 
-Not started goals:
-- Sample of use
-- Full basic project
+The model is documented in [`docs/conceptual-model.md`](docs/conceptual-model.md). The intended implementation sequence and validation milestones live in [`docs/implementation-plan.md`](docs/implementation-plan.md).
+
+## Core idea
+
+Everything that participates in the simulation can be represented as a **node**. Nodes have characteristics, can perceive and relate to other nodes, and can themselves be composed of other nodes. Composite nodes may develop emergent characteristics from their members and internal structure.
+
+This lets the same language describe an individual, a couple, a family, an institution, a community or a society without introducing a separate simulation model for every scale.
+
+## Historical note
+
+The repository previously contained an experimental C# implementation built around nodes, characteristics and relations. That implementation has deliberately been removed from this branch. A few conceptual intuitions survived, but the new model should not be constrained by the old API or architecture. See [`docs/legacy-notes.md`](docs/legacy-notes.md).
