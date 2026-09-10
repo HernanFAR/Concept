@@ -1,27 +1,32 @@
 # Concept
 
-Concept explores a compact model for systems of related nodes and the reusable primitives needed to build domain-specific simulations on top of them.
+Concept is an experimental toolkit for modeling systems of related nodes without baking a particular social, game, or simulation ontology into the core.
 
-The repository is currently moving from the frozen conceptual model into the first implementation pressure tests.
+The current work is focused on discovering the smallest reusable primitives for:
 
-## Status
+- domain-defined node types;
+- characteristic sets;
+- arbitrary characteristic topology;
+- heterogeneous characteristic state shapes;
+- later composition, perception, relation, event, and history experiments.
 
-**Conceptual model v0.1 — implementation experiments in progress.**
+Concrete social modeling is intentionally treated as a consumer of `Concept.Core`, not as the definition of the Core itself.
 
-- Conceptual model: [`docs/conceptual-model.md`](docs/conceptual-model.md)
-- Implementation plan: [`docs/implementation-plan.md`](docs/implementation-plan.md)
-- Development boundaries: [`docs/development-boundaries.md`](docs/development-boundaries.md)
-- Phase 1 pressure test: [`docs/phase-1-pressure-test.md`](docs/phase-1-pressure-test.md)
-- Future evolutions: [`docs/evolution.md`](docs/evolution.md)
+## Current development
 
-## Core idea
+The active implementation experiment is on `feat/core-characteristic-foundation`.
 
-Everything that participates in the generic model can be represented as a **node**. Consumers define concrete node types and characteristic sets; Concept.Core supplies reusable structure without assuming what those domains mean.
+The first pressure test established that characteristic sets and arbitrary topology can remain generic while mandatory `Minimum / Value / Maximum` state cannot. State shape is now separated from characteristic identity.
 
-Nodes can expose multiple characteristic sets, and those sets may use different scalar types and different topologies. Circular characteristic wheels are therefore projections for suitable sets rather than a built-in domain assumption.
+The current Phase 2 experiment goes one step further: a characteristic definition is typed by the state shape it accepts while heterogeneous sets remain discoverable through non-generic Core contracts. This lets Core reject invalid state associations without knowing consumer-specific state types.
 
-## Architectural direction
+See:
 
-`Concept.Core` is intentionally domain-agnostic. Concrete models such as a future `Concept.Social` consume Core rather than shaping Core around one social ontology.
+- [`docs/conceptual-model.md`](docs/conceptual-model.md)
+- [`docs/implementation-plan.md`](docs/implementation-plan.md)
+- [`docs/phase-1-pressure-test.md`](docs/phase-1-pressure-test.md)
+- [`docs/phase-2-state-shape-ownership.md`](docs/phase-2-state-shape-ownership.md)
+- [`docs/development-boundaries.md`](docs/development-boundaries.md)
+- [`docs/evolution.md`](docs/evolution.md)
 
-The repository previously contained an experimental C# implementation built around nodes, characteristics and relations. That implementation was deliberately removed before this redesign. See [`docs/legacy-notes.md`](docs/legacy-notes.md).
+The API remains intentionally provisional while these pressure tests are running.
