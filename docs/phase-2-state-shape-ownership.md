@@ -47,9 +47,9 @@ The set remains heterogeneous through the non-generic `ICharacteristicDefinition
 
 - generic definitions add some declaration noise;
 - generic consumers that only discover characteristics at runtime still operate through `ICharacteristicDefinition` and `ICharacteristicState`;
-- identity scope needs care: two different definition instances may carry the same `CharacteristicId` and state type.
+- identity must remain separate from representation so schema changes do not silently redefine the characteristic itself.
 
-This is the current implementation experiment.
+This remains the current implementation experiment.
 
 ### 3. Separate schema/validation object
 
@@ -92,20 +92,15 @@ The process pressure fixture intentionally mixes:
 
 No Core type is introduced for `ProcessOutputState`.
 
-## Important remaining friction: definition identity
+## Identity pressure after this experiment
 
-A typed definition is currently treated as a scoped handle belonging to the exact set definition that contains it. Another definition instance with the same `CharacteristicId` is not accepted as that handle.
+The original implementation used definition-instance identity to prevent a typed handle from accidentally crossing set boundaries. That solved one problem but made reconstruction after serialization semantically wrong.
 
-This is deliberate for the experiment because characteristic IDs are currently scoped by their set. Accepting an equivalent-looking definition from another set would make accidental cross-set retrieval possible.
+The follow-up identity pressure test now uses an explicit set-scoped `CharacteristicKey = (CharacteristicSetId, CharacteristicId)` while keeping the accepted state type as a separate compatibility contract.
 
-However, reference identity is not yet considered a final semantic model. Future pressure tests should decide whether the stable identity should instead be something like:
+This means an independently reconstructed definition may still act as the same typed handle when its key and state type agree, without allowing the same local id from another set to resolve accidentally.
 
-- `(CharacteristicSetId, CharacteristicId)`;
-- an explicit globally unique characteristic key;
-- a schema-bound characteristic identity;
-- or the definition object itself.
-
-Do not hide this issue with custom equality until composition, serialization or cross-process usage forces a choice.
+See [`phase-2-characteristic-identity.md`](phase-2-characteristic-identity.md).
 
 ## Current conclusion
 
@@ -115,6 +110,7 @@ The typed-definition approach currently provides the best balance of the tested 
 - Core owns the structural invariant that a definition and state must agree;
 - sets remain heterogeneous;
 - strongly typed consumers avoid casts;
-- generic consumers retain untyped discovery.
+- generic consumers retain untyped discovery;
+- semantic identity no longer depends on sharing the same definition object instance.
 
-This is **provisional**, not frozen. The next useful pressure should come from mutation/transformation semantics and from a consumer that needs to reconstruct definitions rather than sharing in-memory instances. Either may invalidate the current identity choice.
+This is **provisional**, not frozen. Mutation/transformation semantics, persistence and another consumer are the next places most likely to invalidate or refine the current contracts.
