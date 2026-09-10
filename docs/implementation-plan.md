@@ -39,27 +39,34 @@ Do not encode a fixed characteristic circle. Circular tension/complement arrange
 
 **Exit:** at least two materially different test characteristic sets can be represented using the same Core API, including one non-circular set.
 
-Status: **pressure-tested on `feat/core-characteristic-foundation`**. The current API represents both a small undirected integer set and a directed branching decimal set, including both sets on the same concrete node subtype. The primary unresolved friction is that bounded state is still mandatory. See [`phase-1-pressure-test.md`](phase-1-pressure-test.md).
+Status: **pressure-tested on `feat/core-characteristic-foundation`**. See [`phase-1-pressure-test.md`](phase-1-pressure-test.md).
 
 ## Phase 2 — State shape and deformation
 
-Explore generic ways to represent current value, lower bound and upper bound without naming them after one domain unless their semantics prove generally reusable.
+Challenge the assumption that every characteristic has the same state geometry.
 
-The first pressure test surfaced an important constraint: every characteristic is currently forced into a `Minimum / Value / Maximum` shape. Phase 2 must challenge that assumption before mutation semantics are added.
+The current experiment separates characteristic identity from characteristic state shape:
 
-Use concrete fixtures to compare at least:
+- `ValueCharacteristicState<TValue>` represents a plain value;
+- `BoundedCharacteristicState<TValue>` represents lower/current/upper state;
+- consumers may introduce arbitrary structured states through `ICharacteristicState`.
 
-- a plain current value with no bounds;
-- a bounded value;
-- a consumer-specific state shape that should not require changes to Core topology or node APIs.
+A single characteristic set must be able to contain different state shapes without requiring changes to `Node`, set membership, or topology.
 
-The familiar social interpretation remains useful as one consumer-level model:
+The next question is **state-shape ownership**: whether and how a `CharacteristicDefinition` should constrain the state shape associated with that characteristic.
 
-- Ability = current value;
-- Minimum = lower reachable bound;
-- Potential = upper reachable bound.
+Pressure-test at least these alternatives before freezing an API:
 
-**Exit:** bounded values remain available where useful, but a characteristic set is not forced into that shape unless evidence shows bounds are universal. Two nodes with the same current value may have different reachable ranges, and the representation remains meaningful outside the social example.
+- unconstrained definition + runtime typed retrieval;
+- typed characteristic identity/definition;
+- separate schema/validation contract;
+- consumer-owned validation with Core remaining intentionally ignorant.
+
+Do not add generic capability interfaces such as bounds, midpoint, arithmetic or interpolation until a second use case requires them.
+
+**Exit:** plain, bounded and consumer-specific state coexist cleanly; invalid state-shape associations have a deliberate ownership model; strongly typed consumers do not require unsafe casts or Core changes for every new state type.
+
+Status: **started**.
 
 ## Phase 3 — Social plasticity experiment
 
