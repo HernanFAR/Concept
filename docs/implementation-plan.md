@@ -39,19 +39,27 @@ Do not encode a fixed characteristic circle. Circular tension/complement arrange
 
 **Exit:** at least two materially different test characteristic sets can be represented using the same Core API, including one non-circular set.
 
-Status: **started on `feat/core-characteristic-foundation`**.
+Status: **pressure-tested on `feat/core-characteristic-foundation`**. The current API represents both a small undirected integer set and a directed branching decimal set, including both sets on the same concrete node subtype. The primary unresolved friction is that bounded state is still mandatory. See [`phase-1-pressure-test.md`](phase-1-pressure-test.md).
 
 ## Phase 2 — State shape and deformation
 
 Explore generic ways to represent current value, lower bound and upper bound without naming them after one domain unless their semantics prove generally reusable.
 
-Use concrete social fixtures to test the familiar interpretation:
+The first pressure test surfaced an important constraint: every characteristic is currently forced into a `Minimum / Value / Maximum` shape. Phase 2 must challenge that assumption before mutation semantics are added.
+
+Use concrete fixtures to compare at least:
+
+- a plain current value with no bounds;
+- a bounded value;
+- a consumer-specific state shape that should not require changes to Core topology or node APIs.
+
+The familiar social interpretation remains useful as one consumer-level model:
 
 - Ability = current value;
 - Minimum = lower reachable bound;
 - Potential = upper reachable bound.
 
-**Exit:** two nodes with the same current value can have different reachable ranges, and the representation remains meaningful outside the social example.
+**Exit:** bounded values remain available where useful, but a characteristic set is not forced into that shape unless evidence shows bounds are universal. Two nodes with the same current value may have different reachable ranges, and the representation remains meaningful outside the social example.
 
 ## Phase 3 — Social plasticity experiment
 
