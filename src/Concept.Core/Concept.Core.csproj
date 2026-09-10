@@ -1,0 +1,5 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <Description>Dependency-free primitives for systems of related nodes.</Description>
+  </PropertyGroup>
+</Project>
