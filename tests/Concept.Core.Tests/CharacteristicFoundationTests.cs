@@ -33,7 +33,7 @@ public sealed class CharacteristicFoundationTests
     }
 
     [Fact]
-    public void Node_can_hold_and_retrieve_a_domain_defined_characteristic_set()
+    public void Node_subtype_can_hold_and_retrieve_a_domain_defined_characteristic_set()
     {
         var definition = new CharacteristicSetDefinition(
             ColorSetId,
@@ -50,11 +50,14 @@ public sealed class CharacteristicFoundationTests
             [Brightness] = new(0, 70, 100)
         });
 
-        var node = new Node(new NodeId("sample"), [state]);
+        var node = new TestNode(new NodeId("sample"), [state]);
 
         Assert.True(node.TryGetCharacteristicSet<int>(ColorSetId, out var retrieved));
         Assert.NotNull(retrieved);
         Assert.Equal(40, retrieved[Warmth].Value);
         Assert.Equal(70, retrieved[Brightness].Value);
     }
+
+    private sealed class TestNode(NodeId id, IEnumerable<ICharacteristicSetState>? characteristicSets = null)
+        : Node(id, characteristicSets);
 }
