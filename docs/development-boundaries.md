@@ -1,45 +1,47 @@
 # Development boundaries
 
-The first implementation exists to test the conceptual model without collapsing it into a single use case.
+This document records constraints for implementation experiments. It exists to make accidental domain leakage visible while the API is still fluid.
 
-## Core rule
+## Concept.Core
 
-`Concept.Core` must remain domain-agnostic.
+Core may define reusable structural primitives such as:
 
-It may provide reusable primitives for:
+- abstract node identity and extension boundaries;
+- characteristic sets and membership;
+- topology between characteristics;
+- arbitrary characteristic state contracts;
+- typed compatibility between characteristic definitions and state shapes;
+- stable characteristic identity scoped by characteristic set when supported by pressure tests.
 
-- nodes;
-- characteristic identity and grouping;
-- characteristic sets;
-- bounded characteristic state;
-- generic topology/links between characteristics;
-- composition and relation primitives when their semantics are demonstrably reusable;
-- inspectable transitions.
+Core must not assume:
 
-It must not hard-code:
+- a particular society or personality ontology;
+- BiteFight characteristic names or circular geometry;
+- Talent, Fragility, Tolerance, Expression, Perception, or social Relation semantics;
+- that every characteristic has minimum/current/maximum state;
+- that state representation is itself semantic identity;
+- that textual local characteristic ids are globally unique;
+- UI layout or story behavior.
 
-- a social ontology;
-- BiteFight-like characteristics;
-- individuals, families, cities or societies as special node classes;
-- a circular UI;
-- tolerance, talent, fragility or expression merely because the first consumer needs them.
+A current pressure-tested identity model is `CharacteristicKey = (CharacteristicSetId, CharacteristicId)`. Treat it as provisional until mutation, persistence, schema evolution, and another consumer have challenged it.
 
-Those concepts should be promoted into Core only when their generality is demonstrated.
+## Consumers
 
-## Concrete consumers are allowed
+Consumers define what nodes actually are and may introduce any domain-specific state shapes, rules, semantics, projections, or algorithms they need.
 
-Concrete models are expected in tests, experiments and downstream projects. A future `Concept.Social` may depend on `Concept.Core` and define a social interpretation over the generic primitives.
+The fact that two consumers need similar concepts is evidence for possible promotion into Core; the fact that one consumer needs them is not.
 
-Concrete test models are useful pressure tests. They should demonstrate that Core can support a domain without teaching Core the domain vocabulary.
+## Pressure-test rule
 
-## First development slice
+Prefer friction over speculative abstraction. When a valid consumer requires awkward extra work, preserve and examine that friction before adding another generic mechanism. Missing extensibility should be visible in tests rather than hidden behind convenience APIs.
 
-The initial implementation should focus only on the smallest reusable foundation needed to represent:
+## Near-term review checkpoint
 
-1. a node;
-2. one or more characteristic sets attached to that node;
-3. characteristics identified within a set;
-4. a bounded state with minimum, current value and maximum;
-5. generic links between characteristics without assigning domain behavior to those links yet.
+Before expanding into substantial mutation/transformation behavior, review the accumulated Core surface as a whole:
 
-Mutation propagation, social plasticity, tolerance, perception and story presentation remain later slices.
+- whether each abstraction has survived more than one use case;
+- whether names describe structural rather than social semantics;
+- whether identities and ownership boundaries remain coherent;
+- whether test fixtures reveal unnecessary ceremony;
+- whether any convenience API is masking a missing abstraction;
+- whether anything currently in Core belongs back in a consumer.
