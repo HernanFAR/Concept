@@ -63,13 +63,19 @@ The state-shape ownership experiment currently uses a typed definition contract:
 
 This is provisional. The experiment explicitly compared unconstrained definitions, typed definitions, separate schemas, and consumer-owned validators. The typed-definition approach currently gives the best balance without making Core aware of consumer-specific state types. See [`phase-2-state-shape-ownership.md`](phase-2-state-shape-ownership.md).
 
-The primary unresolved friction is now **characteristic identity scope**. A typed definition currently acts as a set-scoped in-memory handle. Before freezing this API, later pressure must determine whether stable identity belongs to `(CharacteristicSetId, CharacteristicId)`, a globally unique key, a schema-bound identity, or the definition object itself.
+Characteristic identity has now been pressure-tested separately. The current preferred model is a set-scoped key:
+
+`CharacteristicKey = (CharacteristicSetId, CharacteristicId)`
+
+This allows local ids to be reused by different sets, permits equivalent definitions to be reconstructed after serialization, and keeps state-shape compatibility separate from semantic identity. A set rejects definitions whose key belongs to another set, while typed lookup accepts an independently reconstructed definition when key and state type agree. See [`phase-2-characteristic-identity.md`](phase-2-characteristic-identity.md).
+
+This identity model is still provisional until mutation, persistence, and a second consumer exercise versioning, namespaces, aliases, and schema evolution.
 
 Do not add generic capability interfaces such as bounds, midpoint, arithmetic or interpolation until a second use case requires them.
 
 **Exit:** plain, bounded and consumer-specific state coexist cleanly; invalid state-shape associations have a deliberate ownership model; strongly typed consumers do not require unsafe casts or Core changes for every new state type; characteristic identity semantics are explicit enough for the first mutation/serialization use cases.
 
-Status: **typed state-shape ownership pressure-tested; identity scope remains open**.
+Status: **state-shape ownership and set-scoped identity pressure-tested; next pressure should come from mutation/transformation semantics, then a general review before expanding further**.
 
 ## Phase 3 — Social plasticity experiment
 
