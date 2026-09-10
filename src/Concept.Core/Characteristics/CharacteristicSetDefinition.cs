@@ -23,6 +23,12 @@ public sealed class CharacteristicSetDefinition
         if (definitions.Length == 0)
             throw new ArgumentException("A characteristic set must contain at least one characteristic.", nameof(characteristics));
 
+        var foreign = definitions.Where(x => x.Key.SetId != id).Select(x => x.Key).ToArray();
+        if (foreign.Length > 0)
+            throw new ArgumentException(
+                $"Every characteristic definition must belong to set '{id}'. Foreign keys: {string.Join(", ", foreign)}.",
+                nameof(characteristics));
+
         var duplicates = definitions.GroupBy(x => x.Id).Where(x => x.Count() > 1).Select(x => x.Key).ToArray();
         if (duplicates.Length > 0)
             throw new ArgumentException($"Duplicate characteristic ids: {string.Join(", ", duplicates)}.", nameof(characteristics));
@@ -46,6 +52,8 @@ public sealed class CharacteristicSetDefinition
 
     public bool Contains<TState>(CharacteristicDefinition<TState> characteristic)
         where TState : ICharacteristicState =>
+        characteristic.Key.SetId == Id &&
         _characteristics.TryGetValue(characteristic.Id, out var candidate) &&
-        ReferenceEquals(candidate, characteristic);
+        candidate.Key == characteristic.Key &&
+        candidate.StateType == characteristic.StateType;
 }
