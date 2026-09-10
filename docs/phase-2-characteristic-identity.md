@@ -93,3 +93,5 @@ Do not solve these pre-emptively.
 Set-scoped identity is the smallest model that survives both local vocabulary reuse and reconstructed definitions.
 
 It is therefore the current preferred identity model, but should remain open until mutation, persistence, and a second consumer have exercised it.
+
+Before expanding much beyond the first mutation/transformation experiment, perform a general review of the accumulated Core surface, naming, ergonomics, and accidental domain assumptions.
