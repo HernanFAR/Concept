@@ -183,6 +183,86 @@ public sealed class CharacteristicFoundationTests
         Assert.Throws<ArgumentException>(() => new CharacteristicSetState(model.Definition, missing));
     }
 
+    [Fact]
+    public void Consumer_transformation_returns_a_new_snapshot_and_leaves_the_source_unchanged()
+    {
+        var model = CreateProcessModel();
+
+        var next = IncreaseConversion(model, 2m);
+
+        Assert.True(model.State.TryGet(model.Conversion, out var before));
+        Assert.True(next.TryGet(model.Conversion, out var after));
+        Assert.Equal(8.75m, before.Value);
+        Assert.Equal(10.75m, after.Value);
+        Assert.NotSame(model.State, next);
+    }
+
+    [Fact]
+    public void Consumer_transformation_can_replace_multiple_heterogeneous_states_from_one_source_snapshot()
+    {
+        var model = CreateProcessModel();
+
+        var next = Convert(model, 2m);
+
+        Assert.True(next.TryGet(model.Conversion, out var conversion));
+        Assert.True(next.TryGet(model.Output, out var output));
+        Assert.True(next.TryGet(model.Waste, out var waste));
+        Assert.Equal(10.75m, conversion.Value);
+        Assert.Equal(7.75m, output.Yield);
+        Assert.Equal(3.0m, waste.Value);
+
+        Assert.True(model.State.TryGet(model.Output, out var originalOutput));
+        Assert.Equal(6.25m, originalOutput.Yield);
+    }
+
+    [Fact]
+    public void Replacement_accepts_a_reconstructed_definition_with_the_same_stable_identity_and_contract()
+    {
+        var model = CreateProcessModel();
+        var reconstructed = Def<ProcessOutputState>(ProcessSetId, Output, "Output reconstructed elsewhere");
+
+        var next = model.State.With(reconstructed, new ProcessOutputState(9m, 0.95m));
+
+        Assert.True(next.TryGet(model.Output, out var output));
+        Assert.Equal(9m, output.Yield);
+    }
+
+    [Fact]
+    public void Replacement_rejects_a_characteristic_handle_from_another_set()
+    {
+        var model = CreateProcessModel();
+        var foreign = Def<ProcessOutputState>(ColorSetId, Output, "Foreign output");
+
+        Assert.Throws<ArgumentException>(() => model.State.With(foreign, new ProcessOutputState(9m, 0.9m)));
+    }
+
+    private static CharacteristicSetState IncreaseConversion(ProcessModel model, decimal amount)
+    {
+        Assert.True(model.State.TryGet(model.Conversion, out var current));
+        return model.State.With(
+            model.Conversion,
+            new BoundedCharacteristicState<decimal>(current.Minimum, current.Value + amount, current.Maximum));
+    }
+
+    private static CharacteristicSetState Convert(ProcessModel model, decimal amount)
+    {
+        Assert.True(model.State.TryGet(model.Conversion, out var conversion));
+        Assert.True(model.State.TryGet(model.Output, out var output));
+        Assert.True(model.State.TryGet(model.Waste, out var waste));
+
+        var nextConversion = new BoundedCharacteristicState<decimal>(
+            conversion.Minimum,
+            conversion.Value + amount,
+            conversion.Maximum);
+        var nextOutput = output with { Yield = output.Yield + amount * 0.75m };
+        var nextWaste = new ValueCharacteristicState<decimal>(waste.Value + amount * 0.25m);
+
+        return model.State
+            .With(model.Conversion, nextConversion)
+            .With(model.Output, nextOutput)
+            .With(model.Waste, nextWaste);
+    }
+
     private static ColorModel CreateColorModel()
     {
         var warmth = Def<BoundedCharacteristicState<int>>(ColorSetId, Warmth, "Warmth");
