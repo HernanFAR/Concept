@@ -17,6 +17,15 @@ public sealed class CharacteristicSetState
         if (!expected.SetEquals(actual))
             throw new ArgumentException("State must define exactly one value for every characteristic in the set.", nameof(states));
 
+        foreach (var characteristic in definition.Characteristics)
+        {
+            var state = states[characteristic.Id];
+            if (!characteristic.Accepts(state))
+                throw new ArgumentException(
+                    $"Characteristic '{characteristic.Id}' requires state type '{characteristic.StateType.Name}', but received '{state.GetType().Name}'.",
+                    nameof(states));
+        }
+
         _states = new Dictionary<CharacteristicId, ICharacteristicState>(states);
     }
 
@@ -36,5 +45,17 @@ public sealed class CharacteristicSetState
 
         state = default!;
         return false;
+    }
+
+    public bool TryGet<TState>(CharacteristicDefinition<TState> characteristic, out TState state)
+        where TState : ICharacteristicState
+    {
+        if (!Definition.Contains(characteristic))
+        {
+            state = default!;
+            return false;
+        }
+
+        return TryGet(characteristic.Id, out state);
     }
 }
