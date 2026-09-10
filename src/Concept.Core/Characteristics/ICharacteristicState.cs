@@ -4,4 +4,6 @@ namespace Concept.Core.Characteristics;
 /// Marker contract for state associated with a characteristic.
 /// Concept.Core does not prescribe the internal shape of that state.
 /// </summary>
-public interface ICharacteristicState;
+public interface ICharacteristicState
+{
+}
