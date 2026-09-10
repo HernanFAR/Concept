@@ -2,11 +2,11 @@ using Concept.Core.Characteristics;
 
 namespace Concept.Core.Nodes;
 
-public sealed class Node
+public abstract class Node
 {
     private readonly IReadOnlyDictionary<CharacteristicSetId, ICharacteristicSetState> _sets;
 
-    public Node(NodeId id, IEnumerable<ICharacteristicSetState>? characteristicSets = null)
+    protected Node(NodeId id, IEnumerable<ICharacteristicSetState>? characteristicSets = null)
     {
         Id = id;
         var sets = (characteristicSets ?? []).ToArray();
