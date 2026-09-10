@@ -25,10 +25,10 @@ public sealed class CharacteristicFoundationTests
     [Fact]
     public void Set_rejects_links_to_unknown_characteristics()
     {
-        var definitions = new[]
+        var definitions = new ICharacteristicDefinition[]
         {
-            new CharacteristicDefinition(Warmth, "Warmth"),
-            new CharacteristicDefinition(Brightness, "Brightness")
+            new CharacteristicDefinition<BoundedCharacteristicState<int>>(Warmth, "Warmth"),
+            new CharacteristicDefinition<BoundedCharacteristicState<int>>(Brightness, "Brightness")
         };
 
         Assert.Throws<ArgumentException>(() => new CharacteristicSetDefinition(
@@ -41,13 +41,13 @@ public sealed class CharacteristicFoundationTests
     [Fact]
     public void Node_subtype_can_hold_and_retrieve_a_domain_defined_characteristic_set()
     {
-        var state = CreateColorState();
+        var (state, warmthDefinition, brightnessDefinition) = CreateColorState();
         var node = new TestNode(new NodeId("sample"), [state]);
 
         Assert.True(node.TryGetCharacteristicSet(ColorSetId, out var retrieved));
         Assert.NotNull(retrieved);
-        Assert.True(retrieved.TryGet<BoundedCharacteristicState<int>>(Warmth, out var warmth));
-        Assert.True(retrieved.TryGet<BoundedCharacteristicState<int>>(Brightness, out var brightness));
+        Assert.True(retrieved.TryGet(warmthDefinition, out var warmth));
+        Assert.True(retrieved.TryGet(brightnessDefinition, out var brightness));
         Assert.Equal(40, warmth.Value);
         Assert.Equal(70, brightness.Value);
     }
@@ -57,16 +57,16 @@ public sealed class CharacteristicFoundationTests
     {
         var definition = CreateProcessDefinition();
 
-        Assert.Equal(4, definition.Characteristics.Count);
-        Assert.Equal(3, definition.Links.Count);
+        Assert.Equal(4, definition.Definition.Characteristics.Count);
+        Assert.Equal(3, definition.Definition.Links.Count);
 
-        Assert.Contains(definition.Links, link =>
+        Assert.Contains(definition.Definition.Links, link =>
             link.Source == Intake &&
             link.Target == Conversion &&
             link.IsDirected &&
             link.Kind == new CharacteristicLinkKind("flow"));
 
-        Assert.Contains(definition.Links, link =>
+        Assert.Contains(definition.Definition.Links, link =>
             link.Source == Conversion &&
             link.Target == Waste &&
             link.IsDirected &&
@@ -78,51 +78,91 @@ public sealed class CharacteristicFoundationTests
     {
         var process = CreateProcessState();
 
-        Assert.True(process.TryGet<ValueCharacteristicState<decimal>>(Intake, out var intake));
+        Assert.True(process.State.TryGet(process.Intake, out var intake));
         Assert.Equal(12.5m, intake.Value);
 
-        Assert.True(process.TryGet<BoundedCharacteristicState<decimal>>(Conversion, out var conversion));
+        Assert.True(process.State.TryGet(process.Conversion, out var conversion));
         Assert.Equal(8.75m, conversion.Value);
         Assert.Equal(20m, conversion.Maximum);
 
-        Assert.True(process.TryGet<ProcessOutputState>(Output, out var output));
+        Assert.True(process.State.TryGet(process.Output, out var output));
         Assert.Equal(6.25m, output.Yield);
         Assert.Equal(0.92m, output.Quality);
 
-        Assert.True(process.TryGet<ValueCharacteristicState<decimal>>(Waste, out var waste));
+        Assert.True(process.State.TryGet(process.Waste, out var waste));
         Assert.Equal(2.5m, waste.Value);
     }
 
     [Fact]
     public void One_node_can_expose_multiple_sets_without_knowing_their_state_shapes()
     {
-        var node = new TestNode(new NodeId("multi-set"), [CreateColorState(), CreateProcessState()]);
+        var color = CreateColorState();
+        var process = CreateProcessState();
+        var node = new TestNode(new NodeId("multi-set"), [color.State, process.State]);
 
         Assert.Equal(2, node.CharacteristicSets.Count);
-        Assert.True(node.TryGetCharacteristicSet(ColorSetId, out var color));
-        Assert.True(node.TryGetCharacteristicSet(ProcessSetId, out var process));
-        Assert.NotNull(color);
-        Assert.NotNull(process);
+        Assert.True(node.TryGetCharacteristicSet(ColorSetId, out var retrievedColor));
+        Assert.True(node.TryGetCharacteristicSet(ProcessSetId, out var retrievedProcess));
+        Assert.NotNull(retrievedColor);
+        Assert.NotNull(retrievedProcess);
 
-        Assert.True(color.TryGet<BoundedCharacteristicState<int>>(Warmth, out var warmth));
-        Assert.True(process.TryGet<ProcessOutputState>(Output, out var output));
+        Assert.True(retrievedColor.TryGet(color.Warmth, out var warmth));
+        Assert.True(retrievedProcess.TryGet(process.Output, out var output));
         Assert.Equal(40, warmth.Value);
         Assert.Equal(0.92m, output.Quality);
     }
 
     [Fact]
-    public void Retrieving_a_characteristic_with_the_wrong_state_shape_fails_without_conversion()
+    public void Definition_rejects_an_invalid_state_shape_before_the_node_can_observe_it()
+    {
+        var process = CreateProcessDefinition();
+        var invalid = new Dictionary<CharacteristicId, ICharacteristicState>
+        {
+            [Intake] = new ValueCharacteristicState<decimal>(12.5m),
+            [Conversion] = new BoundedCharacteristicState<decimal>(0m, 8.75m, 20m),
+            [Output] = new ValueCharacteristicState<decimal>(6.25m),
+            [Waste] = new ValueCharacteristicState<decimal>(2.5m)
+        };
+
+        var exception = Assert.Throws<ArgumentException>(() => new CharacteristicSetState(process.Definition, invalid));
+
+        Assert.Contains("output", exception.Message, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains(nameof(ProcessOutputState), exception.Message, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Typed_definition_retrieval_does_not_require_a_cast_or_type_argument_at_the_call_site()
     {
         var process = CreateProcessState();
 
-        Assert.False(process.TryGet<BoundedCharacteristicState<decimal>>(Output, out _));
-        Assert.False(process.TryGet<ProcessOutputState>(Intake, out _));
+        var found = process.State.TryGet(process.Output, out var output);
+
+        Assert.True(found);
+        Assert.Equal(0.92m, output.Quality);
+    }
+
+    [Fact]
+    public void Definition_from_another_set_is_not_a_valid_typed_handle_even_when_the_id_matches()
+    {
+        var process = CreateProcessState();
+        var foreignOutput = new CharacteristicDefinition<ProcessOutputState>(Output, "Foreign output");
+
+        Assert.False(process.State.TryGet(foreignOutput, out _));
+    }
+
+    [Fact]
+    public void Untyped_retrieval_remains_available_for_generic_discovery()
+    {
+        var process = CreateProcessState();
+
+        Assert.True(process.State.TryGet<ProcessOutputState>(Output, out var output));
+        Assert.Equal(6.25m, output.Yield);
     }
 
     [Fact]
     public void Set_state_requires_exactly_one_state_for_every_characteristic()
     {
-        var definition = CreateProcessDefinition();
+        var process = CreateProcessDefinition();
         var missing = new Dictionary<CharacteristicId, ICharacteristicState>
         {
             [Intake] = new ValueCharacteristicState<decimal>(10m),
@@ -130,30 +170,33 @@ public sealed class CharacteristicFoundationTests
             [Output] = new ProcessOutputState(8m, 0.8m)
         };
 
-        Assert.Throws<ArgumentException>(() => new CharacteristicSetState(definition, missing));
+        Assert.Throws<ArgumentException>(() => new CharacteristicSetState(process.Definition, missing));
     }
 
-    private static CharacteristicSetState CreateColorState()
+    private static ColorFixture CreateColorState()
     {
+        var warmth = new CharacteristicDefinition<BoundedCharacteristicState<int>>(Warmth, "Warmth");
+        var brightness = new CharacteristicDefinition<BoundedCharacteristicState<int>>(Brightness, "Brightness");
         var definition = new CharacteristicSetDefinition(
             ColorSetId,
             "Color",
-            [
-                new CharacteristicDefinition(Warmth, "Warmth"),
-                new CharacteristicDefinition(Brightness, "Brightness")
-            ],
+            [warmth, brightness],
             [new CharacteristicLink(Warmth, Brightness, new CharacteristicLinkKind("association"))]);
 
-        return new CharacteristicSetState(definition, new Dictionary<CharacteristicId, ICharacteristicState>
+        var state = new CharacteristicSetState(definition, new Dictionary<CharacteristicId, ICharacteristicState>
         {
             [Warmth] = new BoundedCharacteristicState<int>(0, 40, 100),
             [Brightness] = new BoundedCharacteristicState<int>(0, 70, 100)
         });
+
+        return new ColorFixture(state, warmth, brightness);
     }
 
-    private static CharacteristicSetState CreateProcessState() =>
-        new(
-            CreateProcessDefinition(),
+    private static ProcessFixture CreateProcessState()
+    {
+        var definition = CreateProcessDefinition();
+        var state = new CharacteristicSetState(
+            definition.Definition,
             new Dictionary<CharacteristicId, ICharacteristicState>
             {
                 [Intake] = new ValueCharacteristicState<decimal>(12.5m),
@@ -162,23 +205,54 @@ public sealed class CharacteristicFoundationTests
                 [Waste] = new ValueCharacteristicState<decimal>(2.5m)
             });
 
-    private static CharacteristicSetDefinition CreateProcessDefinition() =>
-        new(
+        return new ProcessFixture(
+            state,
+            definition.Intake,
+            definition.Conversion,
+            definition.Output,
+            definition.Waste);
+    }
+
+    private static ProcessDefinitionFixture CreateProcessDefinition()
+    {
+        var intake = new CharacteristicDefinition<ValueCharacteristicState<decimal>>(Intake, "Intake");
+        var conversion = new CharacteristicDefinition<BoundedCharacteristicState<decimal>>(Conversion, "Conversion");
+        var output = new CharacteristicDefinition<ProcessOutputState>(Output, "Output");
+        var waste = new CharacteristicDefinition<ValueCharacteristicState<decimal>>(Waste, "Waste");
+
+        var definition = new CharacteristicSetDefinition(
             ProcessSetId,
             "Process",
-            [
-                new CharacteristicDefinition(Intake, "Intake"),
-                new CharacteristicDefinition(Conversion, "Conversion"),
-                new CharacteristicDefinition(Output, "Output"),
-                new CharacteristicDefinition(Waste, "Waste")
-            ],
+            [intake, conversion, output, waste],
             [
                 new CharacteristicLink(Intake, Conversion, new CharacteristicLinkKind("flow"), IsDirected: true),
                 new CharacteristicLink(Conversion, Output, new CharacteristicLinkKind("flow"), IsDirected: true),
                 new CharacteristicLink(Conversion, Waste, new CharacteristicLinkKind("loss"), IsDirected: true)
             ]);
 
+        return new ProcessDefinitionFixture(definition, intake, conversion, output, waste);
+    }
+
     private readonly record struct ProcessOutputState(decimal Yield, decimal Quality) : ICharacteristicState;
+
+    private sealed record ProcessDefinitionFixture(
+        CharacteristicSetDefinition Definition,
+        CharacteristicDefinition<ValueCharacteristicState<decimal>> Intake,
+        CharacteristicDefinition<BoundedCharacteristicState<decimal>> Conversion,
+        CharacteristicDefinition<ProcessOutputState> Output,
+        CharacteristicDefinition<ValueCharacteristicState<decimal>> Waste);
+
+    private sealed record ProcessFixture(
+        CharacteristicSetState State,
+        CharacteristicDefinition<ValueCharacteristicState<decimal>> Intake,
+        CharacteristicDefinition<BoundedCharacteristicState<decimal>> Conversion,
+        CharacteristicDefinition<ProcessOutputState> Output,
+        CharacteristicDefinition<ValueCharacteristicState<decimal>> Waste);
+
+    private sealed record ColorFixture(
+        CharacteristicSetState State,
+        CharacteristicDefinition<BoundedCharacteristicState<int>> Warmth,
+        CharacteristicDefinition<BoundedCharacteristicState<int>> Brightness);
 
     private sealed class TestNode(NodeId id, IEnumerable<CharacteristicSetState>? characteristicSets = null)
         : Node(id, characteristicSets);
