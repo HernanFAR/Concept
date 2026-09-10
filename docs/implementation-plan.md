@@ -39,6 +39,8 @@ Do not encode a fixed characteristic circle. Circular tension/complement arrange
 
 **Exit:** at least two materially different test characteristic sets can be represented using the same Core API, including one non-circular set.
 
+Status: **started on `feat/core-characteristic-foundation`**.
+
 ## Phase 2 — State shape and deformation
 
 Explore generic ways to represent current value, lower bound and upper bound without naming them after one domain unless their semantics prove generally reusable.
@@ -181,8 +183,12 @@ Explore aggregate nodes as level-of-detail and information compression. Keep det
 
 **Exit:** large systems do not require every node to maintain complete knowledge or direct relations with every other node.
 
-## Phase 14 — Narrative layer
+## Evolution — Interactive stories
 
-Only after causal behavior is trustworthy, allow a narrative system or LLM to consume events, perceptions and causal history from a concrete domain such as `Concept.Social`.
+Interactive stories are deliberately outside the initial implementation sequence. They become an **evolution** once the causal model, social consumer and inspector are trustworthy.
 
-The narrative layer should explain and render what happened; it should not invent hidden causes that contradict the simulation.
+A future story UI should be another projection over the same simulated state: it consumes nodes, characteristic sets, events, expressions, perceptions, relations and domain-defined actions rather than introducing a second simulation model.
+
+Any narrative or LLM layer added later should render and explain simulated causes rather than invent hidden causes that contradict them.
+
+See [`evolution.md`](evolution.md).
