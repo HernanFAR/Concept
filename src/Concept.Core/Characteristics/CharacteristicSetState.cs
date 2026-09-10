@@ -1,13 +1,12 @@
 namespace Concept.Core.Characteristics;
 
-public sealed class CharacteristicSetState<TScalar> : ICharacteristicSetState
-    where TScalar : IComparable<TScalar>
+public sealed class CharacteristicSetState
 {
-    private readonly IReadOnlyDictionary<CharacteristicId, CharacteristicState<TScalar>> _states;
+    private readonly IReadOnlyDictionary<CharacteristicId, ICharacteristicState> _states;
 
     public CharacteristicSetState(
         CharacteristicSetDefinition definition,
-        IReadOnlyDictionary<CharacteristicId, CharacteristicState<TScalar>> states)
+        IReadOnlyDictionary<CharacteristicId, ICharacteristicState> states)
     {
         Definition = definition ?? throw new ArgumentNullException(nameof(definition));
         ArgumentNullException.ThrowIfNull(states);
@@ -18,12 +17,24 @@ public sealed class CharacteristicSetState<TScalar> : ICharacteristicSetState
         if (!expected.SetEquals(actual))
             throw new ArgumentException("State must define exactly one value for every characteristic in the set.", nameof(states));
 
-        _states = new Dictionary<CharacteristicId, CharacteristicState<TScalar>>(states);
+        _states = new Dictionary<CharacteristicId, ICharacteristicState>(states);
     }
 
     public CharacteristicSetDefinition Definition { get; }
-    public Type ScalarType => typeof(TScalar);
-    public IReadOnlyDictionary<CharacteristicId, CharacteristicState<TScalar>> States => _states;
+    public IReadOnlyDictionary<CharacteristicId, ICharacteristicState> States => _states;
 
-    public CharacteristicState<TScalar> this[CharacteristicId id] => _states[id];
+    public ICharacteristicState this[CharacteristicId id] => _states[id];
+
+    public bool TryGet<TState>(CharacteristicId id, out TState state)
+        where TState : ICharacteristicState
+    {
+        if (_states.TryGetValue(id, out var candidate) && candidate is TState typed)
+        {
+            state = typed;
+            return true;
+        }
+
+        state = default!;
+        return false;
+    }
 }
