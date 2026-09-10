@@ -2,13 +2,13 @@ namespace Concept.Core.Characteristics;
 
 public sealed class CharacteristicSetDefinition
 {
-    private readonly IReadOnlyDictionary<CharacteristicId, CharacteristicDefinition> _characteristics;
+    private readonly IReadOnlyDictionary<CharacteristicId, ICharacteristicDefinition> _characteristics;
     private readonly IReadOnlyList<CharacteristicLink> _links;
 
     public CharacteristicSetDefinition(
         CharacteristicSetId id,
         string name,
-        IEnumerable<CharacteristicDefinition> characteristics,
+        IEnumerable<ICharacteristicDefinition> characteristics,
         IEnumerable<CharacteristicLink>? links = null)
     {
         if (string.IsNullOrWhiteSpace(name))
@@ -39,8 +39,13 @@ public sealed class CharacteristicSetDefinition
 
     public CharacteristicSetId Id { get; }
     public string Name { get; }
-    public IReadOnlyCollection<CharacteristicDefinition> Characteristics => _characteristics.Values;
+    public IReadOnlyCollection<ICharacteristicDefinition> Characteristics => _characteristics.Values;
     public IReadOnlyList<CharacteristicLink> Links => _links;
 
-    public CharacteristicDefinition this[CharacteristicId id] => _characteristics[id];
+    public ICharacteristicDefinition this[CharacteristicId id] => _characteristics[id];
+
+    public bool Contains<TState>(CharacteristicDefinition<TState> characteristic)
+        where TState : ICharacteristicState =>
+        _characteristics.TryGetValue(characteristic.Id, out var candidate) &&
+        ReferenceEquals(candidate, characteristic);
 }
