@@ -58,4 +58,22 @@ public sealed class CharacteristicSetState
 
         return TryGet(characteristic.Id, out state);
     }
+
+    public CharacteristicSetState With<TState>(
+        CharacteristicDefinition<TState> characteristic,
+        TState state)
+        where TState : ICharacteristicState
+    {
+        if (!Definition.Contains(characteristic))
+            throw new ArgumentException(
+                $"Characteristic '{characteristic.Key}' does not belong to this set definition with the same state contract.",
+                nameof(characteristic));
+
+        var next = new Dictionary<CharacteristicId, ICharacteristicState>(_states)
+        {
+            [characteristic.Id] = state
+        };
+
+        return new CharacteristicSetState(Definition, next);
+    }
 }
