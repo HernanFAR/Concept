@@ -51,22 +51,25 @@ The current experiment separates characteristic identity from characteristic sta
 - `BoundedCharacteristicState<TValue>` represents lower/current/upper state;
 - consumers may introduce arbitrary structured states through `ICharacteristicState`.
 
-A single characteristic set must be able to contain different state shapes without requiring changes to `Node`, set membership, or topology.
+A single characteristic set can contain different state shapes without requiring changes to `Node`, set membership, or topology.
 
-The next question is **state-shape ownership**: whether and how a `CharacteristicDefinition` should constrain the state shape associated with that characteristic.
+The state-shape ownership experiment currently uses a typed definition contract:
 
-Pressure-test at least these alternatives before freezing an API:
+- `ICharacteristicDefinition` provides the heterogeneous discovery surface;
+- `CharacteristicDefinition<TState>` declares which state shape a characteristic accepts;
+- `CharacteristicSetState` rejects mismatched state associations during construction;
+- a typed definition can be used as a typed retrieval handle, avoiding casts and repeated type arguments;
+- id-based typed retrieval remains available for generic/runtime discovery.
 
-- unconstrained definition + runtime typed retrieval;
-- typed characteristic identity/definition;
-- separate schema/validation contract;
-- consumer-owned validation with Core remaining intentionally ignorant.
+This is provisional. The experiment explicitly compared unconstrained definitions, typed definitions, separate schemas, and consumer-owned validators. The typed-definition approach currently gives the best balance without making Core aware of consumer-specific state types. See [`phase-2-state-shape-ownership.md`](phase-2-state-shape-ownership.md).
+
+The primary unresolved friction is now **characteristic identity scope**. A typed definition currently acts as a set-scoped in-memory handle. Before freezing this API, later pressure must determine whether stable identity belongs to `(CharacteristicSetId, CharacteristicId)`, a globally unique key, a schema-bound identity, or the definition object itself.
 
 Do not add generic capability interfaces such as bounds, midpoint, arithmetic or interpolation until a second use case requires them.
 
-**Exit:** plain, bounded and consumer-specific state coexist cleanly; invalid state-shape associations have a deliberate ownership model; strongly typed consumers do not require unsafe casts or Core changes for every new state type.
+**Exit:** plain, bounded and consumer-specific state coexist cleanly; invalid state-shape associations have a deliberate ownership model; strongly typed consumers do not require unsafe casts or Core changes for every new state type; characteristic identity semantics are explicit enough for the first mutation/serialization use cases.
 
-Status: **started**.
+Status: **typed state-shape ownership pressure-tested; identity scope remains open**.
 
 ## Phase 3 — Social plasticity experiment
 
