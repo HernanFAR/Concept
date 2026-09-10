@@ -8,17 +8,20 @@ The current tests use two materially different characteristic sets:
 
 1. **Color**
    - two characteristics;
-   - integer scalar;
+   - bounded integer state;
    - one undirected association;
    - intentionally small and structurally weak.
 
 2. **Process**
    - four characteristics;
-   - decimal scalar;
    - directed, non-circular topology;
-   - multiple link kinds (`flow`, `loss`).
+   - multiple link kinds (`flow`, `loss`);
+   - heterogeneous state shapes inside the same set:
+     - a plain decimal value;
+     - a bounded decimal value;
+     - a consumer-specific structured state.
 
-A single concrete `Node` subtype is also exercised with both sets at once, including different scalar types per set.
+A single concrete `Node` subtype is also exercised with both sets at once.
 
 ## What survived cleanly
 
@@ -40,21 +43,36 @@ The process fixture forms a directed branching graph:
 
 This fits the same `CharacteristicLink` primitive used by the simpler color fixture. A wheel is therefore a projection for suitable sets, not an assumption of the Core model.
 
-### Different sets may use different scalar types
+### State shape is no longer universal
 
-A node can expose an integer-valued set and a decimal-valued set simultaneously. Core does not currently require a universal scalar for a node.
+The initial implementation assumed every characteristic had one comparable scalar plus `Minimum`, `Value` and `Maximum`.
+
+The pressure test showed this was too strong. Core now treats characteristic state as an extensibility boundary through `ICharacteristicState`.
+
+Two small reusable state shapes exist only as conveniences:
+
+- `ValueCharacteristicState<TValue>` for a single value;
+- `BoundedCharacteristicState<TValue>` for an inclusive minimum/current/maximum shape.
+
+A consumer may introduce its own state type by implementing `ICharacteristicState`. The process fixture does exactly this with a structured output state containing yield and quality.
+
+This means a characteristic set can contain heterogeneous state shapes without changing `Node`, `CharacteristicSetDefinition`, or topology.
+
+### State retrieval is typed but not coercive
+
+`CharacteristicSetState.TryGet<TState>` retrieves a characteristic only when its actual state shape matches the requested type.
+
+Core performs no conversion and does not pretend unrelated state shapes are interchangeable. Asking for a bounded state when the characteristic actually contains a consumer-specific state simply fails.
 
 ## Friction deliberately left visible
 
-### 1. Bounded state is currently mandatory
+### 1. `ICharacteristicState` is intentionally almost empty
 
-`CharacteristicSetState<TScalar>` currently requires every characteristic to use `CharacteristicState<TScalar>`, and that state always has `Minimum`, `Value` and `Maximum`.
+It is currently a marker contract. This is deliberate.
 
-That is stronger than the generic concept has earned.
+The experiment proves that arbitrary state can participate in the model, but does **not** yet prove that all state shares capabilities such as value, bounds, midpoint, arithmetic, interpolation, mutation, serialization, or projection.
 
-Some consumers may only need a value. Others may need bounds, uncertainty, distributions, vectors, categorical state, or domain-specific state shapes.
-
-**Do not hide this yet.** Phase 2 exists specifically to determine whether bounded state is a reusable primitive, a specialization, or merely one consumer-level interpretation.
+Those capabilities should be added only when multiple consumers pressure the model in the same direction.
 
 ### 2. Characteristic ordering is not part of the contract
 
@@ -81,14 +99,22 @@ This is intentional for Phase 1. Before adding transitions we must decide whethe
 
 Encoding behavior directly into `CharacteristicLink` now would prematurely couple topology and transition policy.
 
-### 4. Wrong scalar retrieval is explicit friction
+### 4. Definitions do not prescribe state shape
 
-Asking a node for a known set using the wrong `TScalar` returns `false`. This keeps conversion out of Core, but it also exposes that callers need to know the scalar shape of the selected set.
+`CharacteristicDefinition` currently identifies and names a characteristic, but does not declare which state type it expects.
 
-The future generic inspector/playground will pressure-test whether `ScalarType` plus untyped discovery is sufficient or whether a richer projection contract is needed.
+That gives maximum freedom, but means an invalid state shape can currently be associated with a characteristic as long as the characteristic id exists in the set.
+
+We should not fix this reflexively. Phase 2 must determine whether state-shape constraints belong in the definition, in a typed characteristic abstraction, in the consumer, or in a separate validation layer.
 
 ## Current conclusion
 
-The first pressure test does **not** justify adding more Core abstractions yet.
+The bounded-state assumption did not survive pressure testing and has been removed from the generic set contract.
 
-The current topology and set-definition model survives two different shapes, while the strongest unresolved issue is state representation. The next implementation work should therefore challenge the mandatory bounded-state assumption before introducing mutation or social mechanics.
+The current model now demonstrates three state categories without modifying the surrounding node/set/topology abstractions:
+
+1. plain value;
+2. bounded value;
+3. consumer-specific structured state.
+
+The next pressure point is **state-shape ownership**: whether a characteristic definition should know or constrain the shape of its state, and how strongly typed consumers can express that without making heterogeneous sets painful.
