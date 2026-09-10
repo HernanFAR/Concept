@@ -1,46 +1,85 @@
 # Implementation plan
 
-The implementation should grow from causal primitives outward. Narrative generation is intentionally deferred until the simulation can explain its own state transitions.
+The implementation should grow from generic causal primitives outward. Narrative generation and concrete social ontologies are intentionally deferred until the reusable abstractions can explain and survive multiple consuming models.
+
+## Architectural rule
+
+`Concept.Core` must remain domain-agnostic. It should provide reusable primitives for systems of related nodes without assuming individuals, societies, personality dimensions, game-specific characteristics or a fixed visualization.
+
+A likely project structure is:
+
+- `Concept.Core`: generic primitives;
+- `Concept.Social`: provisional consumer/domain layer for the individual/society model explored here;
+- `Concept.Core.Tests`: invariant and abstraction tests, using concrete fixtures only as examples;
+- `Concept.Social.Tests`: tests for social hypotheses;
+- `Concept.Social.Playground` (working name): interactive visual laboratory for concrete models.
+
+The split is provisional in naming, but the dependency direction is not: domain layers consume Core; Core does not depend on them.
 
 ## Phase 0 — Conceptual model
 
-Freeze vocabulary, invariants and known open questions.
+Freeze vocabulary, invariants, architectural boundaries and known open questions.
 
-**Exit:** `conceptual-model.md` can describe the system without relying on implementation details.
+**Exit:** `conceptual-model.md` can describe the system without relying on implementation details or a particular social ontology.
 
-Status: **complete for v0.1**.
+Status: **complete for v0.1**, subject to refinement when experiments reveal conceptual contradictions.
 
-## Phase 1 — Characteristic geometry
+## Phase 1 — Generic nodes, characteristic sets and topology
 
-Implement a minimal node and characteristic system with:
+Implement the smallest reusable model capable of representing:
 
-- current Ability;
-- Minimum and Potential;
-- tension links;
-- complement links;
-- mutations constrained by the characteristic topology.
+- nodes;
+- domain-defined characteristic sets;
+- characteristics belonging to those sets;
+- current values and generic bounded values where justified;
+- domain-defined links/topology among characteristics;
+- composition of nodes where this can be expressed without social assumptions.
 
-**Exit:** changing one characteristic produces inspectable and repeatable consequences through tensions/complements while respecting bounds.
+Do not encode a fixed characteristic circle. Circular tension/complement arrangements must be constructs that a consuming model can define using generic topology primitives.
 
-## Phase 2 — Plasticity
+**Exit:** at least two materially different test characteristic sets can be represented using the same Core API, including one non-circular set.
 
-Add Talent and Fragility as slow-changing stats that affect increase and regression rates.
+## Phase 2 — State shape and deformation
 
-**Exit:** two nodes exposed to the same sequence of events evolve differently because their plasticity differs.
+Explore generic ways to represent current value, lower bound and upper bound without naming them after one domain unless their semantics prove generally reusable.
 
-## Phase 3 — Tolerance
+Use concrete social fixtures to test the familiar interpretation:
 
-Add tolerance intervals, midpoint receptivity, rejection outside the interval and edge-driven interval evolution.
+- Ability = current value;
+- Minimum = lower reachable bound;
+- Potential = upper reachable bound.
 
-**Exit:** two previously unrelated nodes can exhibit immediate compatibility/friction, and repeated edge interactions can reshape future tolerance.
+**Exit:** two nodes with the same current value can have different reachable ranges, and the representation remains meaningful outside the social example.
 
-## Phase 4 — Expression and perception
+## Phase 3 — Social plasticity experiment
+
+In `Concept.Social`, prototype Talent and Fragility as slow-changing stats that affect increase and regression rates.
+
+Do not promote them into Core merely because the first consumer needs them.
+
+**Exit:** two social nodes exposed to the same sequence evolve differently because their plasticity differs; the experiment produces evidence for or against a more generic Core abstraction.
+
+## Phase 4 — Social tolerance experiment
+
+Add tolerance intervals in `Concept.Social`:
+
+- lower and upper bounds;
+- meaningful midpoint;
+- rejection outside the interval;
+- increased relational receptivity near the midpoint;
+- edge-driven expansion/contraction of the interval.
+
+**Exit:** unrelated nodes can exhibit immediate compatibility/friction, and repeated edge interactions can reshape future tolerance without special-case narrative code.
+
+## Phase 5 — Expression and perception
 
 Separate real state from expressed state and perceived state. Perception must support partial and incorrect knowledge.
 
+The implementation should make clear which part is reusable graph/information infrastructure and which part belongs specifically to the social consumer.
+
 **Exit:** a node can react coherently to another while holding an incomplete or mistaken model of it.
 
-## Phase 5 — Relation experiment
+## Phase 6 — Relation experiment
 
 Introduce the smallest directional relation representation that can correctly modulate the impact of events.
 
@@ -48,34 +87,75 @@ Do not pre-commit to a single scalar versus a multidimensional relation model.
 
 **Exit:** the same external event produces materially different effects depending on the relation between observer and affected node.
 
-## Phase 6 — Social perception
+## Phase 7 — Social perception
 
-Allow nodes to perceive relations between other nodes and let those perceptions influence their own relations.
+Allow nodes to perceive relations between other nodes and let those perceptions influence their own relations according to social rules.
 
 **Exit:** association effects such as "friend of my friend" or distrust by perceived affiliation can emerge from general rules rather than dedicated feature code.
 
-## Phase 7 — Composite nodes
+## Phase 8 — Composite and emergent nodes
 
-Allow nodes to contain nodes and define experimental emergence algorithms for composite characteristics.
+Explore reusable composition primitives in Core and concrete emergence algorithms in the consuming layer.
 
-**Exit:** a group can develop characteristics not equal to any one member and not reducible to a naive average; individuals and the group can influence each other in both directions.
+A composite node must not be assumed to be a naive arithmetic average of members.
 
-## Phase 8 — Events and causal history
+**Exit:** a group can develop characteristics not equal to any one member; individuals and the group can influence each other in both directions; the reusable portion of this behavior is clearly separated from social policy.
+
+## Phase 9 — Events and causal history
 
 Represent transitions as events and retain enough causal lineage to explain current state.
 
-**Exit:** the simulator can answer a useful form of "why is X like this?" by pointing to concrete prior transitions.
+History remains a record/explanation mechanism rather than an opaque stat.
 
-## Phase 9 — Minimal society simulation
+**Exit:** the system can answer a useful form of "why is this node like this?" by pointing to concrete prior transitions.
 
-Run a deterministic simulation with approximately:
+## Phase 10 — Set-driven visual playground
+
+Build an interactive playground after enough primitives exist to inspect meaningfully. Its purpose is model exploration, debugging and pressure testing, not business logic.
+
+The central visualization may use a wheel inspired by the motivating interface, but the wheel must be **generic and characteristic-set driven**.
+
+The user must be able to:
+
+- choose a node;
+- choose any characteristic set exposed by that node;
+- render all characteristics in that selected set;
+- switch to another set without changing visualization code;
+- use topology/order metadata when available;
+- gracefully fall back to another layout when a circular projection is inappropriate.
+
+For the same selected characteristic set, provide contextual views/tabs as supported by the consuming model:
+
+- `State`: lower/current/upper values;
+- `Plasticity`: Talent/Fragility;
+- `Tolerance`: interval and midpoint;
+- `Expression`: internal versus expressed values;
+- `Perception`: viewer -> target perceived values and confidence/completeness;
+- `Relation`: directional relation state where meaningful;
+- `Composition`: emergent versus contributing values;
+- `History`: changes and causal transitions.
+
+These tabs are **projections over the same selected characteristic set**, not separate wheels tied to fixed concepts.
+
+Complement the wheel with precise diagnostic views where useful:
+
+- numeric table;
+- causal timeline/event log;
+- relation graph;
+- side-by-side comparison of nodes and perceived-versus-real state.
+
+**Exit:** the playground can inspect at least two different characteristic sets and multiple contextual views without domain-specific rendering branches in the generic visualization components.
+
+## Phase 11 — Minimal social simulation
+
+Run a deterministic consumer-level simulation with approximately:
 
 - 10–50 individuals;
 - one or a few composite groups;
-- a small domain-defined characteristic circle;
+- one or more domain-defined characteristic sets;
 - no LLM and no generative narrative.
 
-The first milestone should demonstrate without special-case rules:
+The first milestone should demonstrate without dedicated phenomenon-specific rules:
 
 1. immediate rejection due to tolerance;
 2. rapid relational evolution near tolerance midpoints;
@@ -83,16 +163,26 @@ The first milestone should demonstrate without special-case rules:
 4. a third party changing its relation after perceiving another relation;
 5. a composite node acquiring emergent characteristics.
 
-If those effects require dedicated rules for each phenomenon, revisit the primitives before scaling.
+If those effects require bespoke systems named after each phenomenon, revisit the primitives before scaling.
 
-## Phase 10 — Scale
+This phase validates `Concept.Social`; it does **not** redefine Concept.Core as a society simulator.
 
-Explore aggregate nodes as social level-of-detail. Keep detailed individual state active where required and use composite nodes as compression elsewhere.
+## Phase 12 — Cross-domain pressure test
 
-**Exit:** the simulation can grow substantially without requiring every node to maintain complete knowledge or direct relations with every other node.
+Before promoting social abstractions into Core, build at least one non-social consumer or substantial test model using the same Core primitives.
 
-## Phase 11 — Narrative layer
+The goal is to distinguish genuinely reusable concepts from abstractions that merely fit the social model nicely.
 
-Only after causal behavior is trustworthy, allow a narrative system or LLM to consume events, perceptions and causal history.
+**Exit:** Core survives a second domain with minimal or no changes, or the mismatches reveal which abstractions need to move back into domain-specific packages.
+
+## Phase 13 — Scale
+
+Explore aggregate nodes as level-of-detail and information compression. Keep detailed state active where required and use composite nodes elsewhere.
+
+**Exit:** large systems do not require every node to maintain complete knowledge or direct relations with every other node.
+
+## Phase 14 — Narrative layer
+
+Only after causal behavior is trustworthy, allow a narrative system or LLM to consume events, perceptions and causal history from a concrete domain such as `Concept.Social`.
 
 The narrative layer should explain and render what happened; it should not invent hidden causes that contradict the simulation.
