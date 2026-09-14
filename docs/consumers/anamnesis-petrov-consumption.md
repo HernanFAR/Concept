@@ -26,7 +26,7 @@ consumer need
 → promote / reject / keep consumer-specific
 ```
 
-No define qué significa aprobar Petrov, qué acción es correcta ni qué métricas debe usar Research.
+No define qué significa Petrov para Anamnesis, qué diferencias conductuales son relevantes para el fenómeno ni qué inferencias experimentales pueden sostenerse a partir de una ejecución.
 
 ## Punto de entrada
 
@@ -156,8 +156,10 @@ La implementación del consumidor es evidencia de diseño: puede mostrar que una
 
 ## Boundary de semántica y autoridad
 
-Anamnesis / Petrov posee:
+Anamnesis / Anima posee:
 
+- el significado del fenómeno que Petrov pretende representar;
+- qué diferencias conductuales importan para ese fenómeno;
 - significado de los estados del escenario;
 - significado de observaciones y acciones;
 - reglas de transición del vertical;
@@ -165,7 +167,12 @@ Anamnesis / Petrov posee:
 - semántica de autoridad, evidencia, coste, gravedad e irreversibilidad;
 - definición de las variantes experimentales.
 
-Research posee la evaluación experimental, incluyendo qué comportamiento constituye evidencia a favor o en contra de una hipótesis.
+Research:
+
+- formaliza hipótesis y criterios experimentales;
+- cuestiona si una operacionalización permite sostener las inferencias pretendidas;
+- identifica confusores, amenazas a validez y problemas de falsabilidad;
+- no redefine por autoridad propia el fenómeno que Anima pretende estudiar.
 
 Concept posee:
 
