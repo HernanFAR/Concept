@@ -74,7 +74,7 @@ Likewise, Project Anima is expected to act as an important consumer and source o
 
 ## Current foundation
 
-The current implementation experiment lives on `feat/core-characteristic-foundation`.
+The current implementation foundation is now the state of `master`.
 
 What has survived pressure testing so far:
 
@@ -127,6 +127,7 @@ The main documents are:
 - [`docs/phase-2-characteristic-identity.md`](docs/phase-2-characteristic-identity.md) — stable characteristic identity.
 - [`docs/phase-2-transformation-semantics.md`](docs/phase-2-transformation-semantics.md) — immutable snapshots and consumer-owned transformation semantics.
 - [`docs/development-boundaries.md`](docs/development-boundaries.md) — boundaries that should not be crossed casually.
+- [`docs/consumers/anamnesis-petrov-consumption.md`](docs/consumers/anamnesis-petrov-consumption.md) — current consumption boundary for the first Anamnesis/Petrov pressure vertical.
 - [`docs/evolution.md`](docs/evolution.md) — later interactive-story direction.
 - [`docs/legacy-notes.md`](docs/legacy-notes.md) — useful ideas preserved from the previous implementation without preserving its architecture.
 
